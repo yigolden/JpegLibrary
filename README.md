@@ -15,4 +15,4 @@ A pure C# implementation of JPEG decoder and encoder.
 * Decode progressive DCT-based JPEG (Huffman coding, SOF2)
 * Decode lossless JPEG (Huffman coding, SOF3)
 * Encode baseline DCT-based JPEG (Huffman coding, SOF0) with optimized coding.
-* Optimize an existing SOF0 image to use optimized Huffman coding.
+* Optimize an existing baseline image to use optimized Huffman coding.
