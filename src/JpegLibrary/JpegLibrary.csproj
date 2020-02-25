@@ -2,6 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>JpegLibrary</Title>
+    <Description>A pure C# implementation of JPEG decoder and encoder.</Description>
     <TargetFrameworks>net46;netstandard1.3;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
