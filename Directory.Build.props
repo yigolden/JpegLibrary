@@ -9,16 +9,15 @@
   <PropertyGroup>
     <Product>JpegLibrary</Product>
     <Authors>YiGolden</Authors>
-    <Copyright>Copyright (c) 2020 yigolden</Copyright>
+    <Copyright>Copyright (c) 2019-2020 yigolden</Copyright>
     <PackageTags>jpeg</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://gitee.com/yigolden/JpegLibrary</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/yigolden/JpegLibrary</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://gitee.com/yigolden/JpegLibrary.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/yigolden/JpegLibrary.git</RepositoryUrl>
 
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)build\key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">false</PublicSign>
   </PropertyGroup>
 
   <ItemGroup>
