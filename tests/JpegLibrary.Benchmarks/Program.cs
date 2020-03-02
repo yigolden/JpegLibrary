@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using BenchmarkDotNet.Running;
 
 namespace JpegLibrary.Benchmarks

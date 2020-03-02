@@ -1,7 +1,8 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 namespace JpegLibrary.ScanDecoder
 {

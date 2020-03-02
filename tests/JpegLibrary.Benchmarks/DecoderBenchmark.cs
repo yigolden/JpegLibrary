@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
 using JpegLibrary.ColorConverters;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
