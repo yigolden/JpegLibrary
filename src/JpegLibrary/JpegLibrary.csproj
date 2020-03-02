@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Title>JpegLibrary</Title>
     <Description>A pure C# implementation of JPEG decoder and encoder.</Description>
-    <TargetFrameworks>net46;netstandard1.3;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -21,13 +21,13 @@
     <DefineConstants>$(DefineConstants);NO_READONLYSEQUENCE_FISTSPAN;NO_BIT_OPERATIONS</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1'">
     <PackageReference Include="System.Numerics.Vectors" Version="$(SystemNumericsVectorsPackageVersion)" />
   </ItemGroup>
 </Project>
