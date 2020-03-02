@@ -4,7 +4,7 @@ using Xunit;
 
 namespace JpegLibrary.Tests.Decoder
 {
-    public class DecoderMetadataTests
+    public class MetadataIdentifyTests
     {
         public class Metadata
         {

@@ -10,9 +10,10 @@ A pure C# implementation of JPEG decoder and encoder.
 
 ## Currently Supported Features
 
-* Decode baseline DCT-based JPEG (Huffman coding, SOF0)
-* Decode extended sequential DCT-based JPEG (Huffman coding, SOF1)
-* Decode progressive DCT-based JPEG (Huffman coding, SOF2)
-* Decode lossless JPEG (Huffman coding, SOF3)
-* Encode baseline DCT-based JPEG (Huffman coding, SOF0) with optimized coding.
+* Decode Huffman-coding baseline DCT-based JPEG (SOF0)
+* Decode Huffman-coding extended sequential DCT-based JPEG (SOF1)
+* Decode Huffman-coding progressive DCT-based JPEG (SOF2)
+* Decode Huffman-coding lossless JPEG (SOF3)
+* Decode arithmetic-coding sequential DCT-based JPEG (SOF9)
+* Encode Huffman-coding baseline DCT-based JPEG (SOF0) with optimized coding.
 * Optimize an existing baseline image to use optimized Huffman coding.
