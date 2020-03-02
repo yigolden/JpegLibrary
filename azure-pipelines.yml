@@ -1,0 +1,73 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    version: 3.0.x
+    performMultiLevelLookup: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restoring Dependencies'
+  inputs:
+    command: restore
+    projects: 'JpegLibrary.sln'
+
+- task: DotNetCoreCLI@2
+  displayName: Build (Debug)
+  inputs:
+    command: build
+    projects: 'JpegLibrary.sln'
+    arguments: '--configuration Debug'
+
+- task: DotNetCoreCLI@2
+  displayName: Build (Release)
+  inputs:
+    command: build
+    projects: 'JpegLibrary.sln'
+    arguments: '--configuration Release'
+
+- task: DotNetCoreCLI@2
+  displayName: Run Tests (Debug)
+  inputs:
+    command: test
+    projects: 'tests/*Tests/*.csproj'
+    arguments: '--configuration Debug'
+
+- task: DotNetCoreCLI@2
+  displayName: Run Tests (Release)
+  inputs:
+    command: test
+    projects: 'tests/*Tests/*.csproj'
+    arguments: '--configuration Release --collect "Code coverage"'
+
+- task: CopyFiles@2
+  displayName: Collect Artifacts
+  inputs:
+    sourceFolder: 'src'
+    contents: '**/*.nupkg'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- task: CopyFiles@2
+  displayName: Collect Artifacts (Symbols)
+  inputs:
+    sourceFolder: 'src'
+    contents: '**/*.snupkg'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifacts
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'Packages'
