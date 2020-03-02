@@ -2,7 +2,7 @@
 using System.IO;
 using Xunit;
 
-namespace JpegLibrary.Tests
+namespace JpegLibrary.Tests.Decoder
 {
     public class DecoderMetadataTests
     {
