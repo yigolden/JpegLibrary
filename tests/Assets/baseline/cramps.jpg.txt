@@ -1,0 +1,206 @@
+
+JPEGsnoop 1.8.0a by Calvin Hass
+  http://www.impulseadventure.com/photo/
+  -------------------------------------
+
+  Filename: [C:\Users\jinyi\Documents\Repos\JpegLibrary\tests\Assets\baseline\cramps.jpg]
+  Filesize: [137766] Bytes
+
+Start Offset: 0x00000000
+*** Marker: SOI (xFFD8) ***
+  OFFSET: 0x00000000
+ 
+*** Marker: DQT (xFFDB) ***
+  Define a Quantization Table.
+  OFFSET: 0x00000002
+  Table length = 67
+  ----
+  Precision=8 bits
+  Destination ID=0 (Luminance)
+    DQT, Row #0:   3   2   2   3   5   8  10  12 
+    DQT, Row #1:   2   2   3   4   5  12  12  11 
+    DQT, Row #2:   3   3   3   5   8  11  14  11 
+    DQT, Row #3:   3   3   4   6  10  17  16  12 
+    DQT, Row #4:   4   4   7  11  14  22  21  15 
+    DQT, Row #5:   5   7  11  13  16  21  23  18 
+    DQT, Row #6:  10  13  16  17  21  24  24  20 
+    DQT, Row #7:  14  18  19  20  22  20  21  20 
+    Approx quality factor = 90.06 (scaling=19.88 variance=1.14)
+ 
+*** Marker: SOF0 (Baseline DCT) (xFFC0) ***
+  OFFSET: 0x00000047
+  Frame header length = 11
+  Precision = 8
+  Number of Lines = 607
+  Samples per Line = 800
+  Image Size = 800 x 607
+  Raw Image Orientation = Landscape
+  Number of Img components = 1
+    Component[1]: ID=0x01, Samp Fac=0x11 (Subsamp 1 x 1), Quant Tbl Sel=0x00 (Lum: Y)
+ 
+*** Marker: DHT (Define Huffman Table) (xFFC4) ***
+  OFFSET: 0x00000054
+  Huffman table length = 30
+  ----
+  Destination ID = 0
+  Class = 0 (DC / Lossless Table)
+    Codes of length 01 bits (001 total): 00 
+    Codes of length 02 bits (000 total): 
+    Codes of length 03 bits (001 total): 07 
+    Codes of length 04 bits (004 total): 04 05 06 08 
+    Codes of length 05 bits (003 total): 02 03 09 
+    Codes of length 06 bits (001 total): 01 
+    Codes of length 07 bits (001 total): 0A 
+    Codes of length 08 bits (000 total): 
+    Codes of length 09 bits (000 total): 
+    Codes of length 10 bits (000 total): 
+    Codes of length 11 bits (000 total): 
+    Codes of length 12 bits (000 total): 
+    Codes of length 13 bits (000 total): 
+    Codes of length 14 bits (000 total): 
+    Codes of length 15 bits (000 total): 
+    Codes of length 16 bits (000 total): 
+    Total number of codes: 011
+
+ 
+*** Marker: DHT (Define Huffman Table) (xFFC4) ***
+  OFFSET: 0x00000074
+  Huffman table length = 73
+  ----
+  Destination ID = 0
+  Class = 1 (AC Table)
+    Codes of length 01 bits (000 total): 
+    Codes of length 02 bits (002 total): 01 02 
+    Codes of length 03 bits (002 total): 03 04 
+    Codes of length 04 bits (001 total): 05 
+    Codes of length 05 bits (003 total): 00 06 11 
+    Codes of length 06 bits (004 total): 07 12 13 21 
+    Codes of length 07 bits (000 total): 
+    Codes of length 08 bits (004 total): 08 14 22 31 
+    Codes of length 09 bits (005 total): 09 15 32 41 51 
+    Codes of length 10 bits (002 total): 23 61 
+    Codes of length 11 bits (005 total): 16 24 42 71 81 
+    Codes of length 12 bits (002 total): 52 91 
+    Codes of length 13 bits (003 total): 33 62 A1 
+    Codes of length 14 bits (006 total): 17 18 25 34 44 72 
+    Codes of length 15 bits (000 total): 
+    Codes of length 16 bits (015 total): B1 82 C1 19 26 43 F0 36 54 73 A2 D1 E1 F1 92 
+    Total number of codes: 054
+
+ 
+*** Marker: SOS (Start of Scan) (xFFDA) ***
+  OFFSET: 0x000000BF
+  Scan header length = 8
+  Number of img components = 1
+    Component[1]: selector=0x01, table=0(DC),0(AC)
+  Spectral selection = 0 .. 63
+  Successive approximation = 0x00
+
+
+*** Decoding SCAN Data ***
+  OFFSET: 0x000000C9
+  Scan Decode Mode: No IDCT (DC only)
+    NOTE: Low-resolution DC component shown. Can decode full-res with [Options->Scan Segment->Full IDCT]
+
+  Scan Data encountered marker   0xFFD9 @ 0x00021A24.0
+
+  Compression stats:
+    Compression Ratio:  3.53:1
+    Bits per pixel:     2.27:1
+
+  Huffman code histogram stats:
+    Huffman Table: (Dest ID: 0, Class: DC)
+      # codes of length 01 bits:     4218 ( 56%)
+      # codes of length 02 bits:        0 (  0%)
+      # codes of length 03 bits:      670 (  9%)
+      # codes of length 04 bits:     1894 ( 25%)
+      # codes of length 05 bits:      648 (  9%)
+      # codes of length 06 bits:      142 (  2%)
+      # codes of length 07 bits:       28 (  0%)
+      # codes of length 08 bits:        0 (  0%)
+      # codes of length 09 bits:        0 (  0%)
+      # codes of length 10 bits:        0 (  0%)
+      # codes of length 11 bits:        0 (  0%)
+      # codes of length 12 bits:        0 (  0%)
+      # codes of length 13 bits:        0 (  0%)
+      # codes of length 14 bits:        0 (  0%)
+      # codes of length 15 bits:        0 (  0%)
+      # codes of length 16 bits:        0 (  0%)
+
+    Huffman Table: (Dest ID: 0, Class: AC)
+      # codes of length 01 bits:        0 (  0%)
+      # codes of length 02 bits:    68402 ( 39%)
+      # codes of length 03 bits:    55210 ( 31%)
+      # codes of length 04 bits:    14296 (  8%)
+      # codes of length 05 bits:    20361 ( 12%)
+      # codes of length 06 bits:    11457 (  7%)
+      # codes of length 07 bits:        0 (  0%)
+      # codes of length 08 bits:     3540 (  2%)
+      # codes of length 09 bits:     1477 (  1%)
+      # codes of length 10 bits:      365 (  0%)
+      # codes of length 11 bits:      414 (  0%)
+      # codes of length 12 bits:       66 (  0%)
+      # codes of length 13 bits:       65 (  0%)
+      # codes of length 14 bits:       72 (  0%)
+      # codes of length 15 bits:        0 (  0%)
+      # codes of length 16 bits:       45 (  0%)
+
+  YCC clipping in DC:
+    Y  component: [<0=    0] [>255=    0]
+    Cb component: [<0=    0] [>255=    0]
+    Cr component: [<0=    0] [>255=    0]
+
+  RGB clipping in DC:
+    R  component: [<0=    0] [>255=    0]
+    G  component: [<0=    0] [>255=    0]
+    B  component: [<0=    0] [>255=    0]
+
+  Average Pixel Luminance (Y):
+    Y=[180] (range: 0..255)
+
+  Brightest Pixel Search:
+    YCC=[ 1017,    0,    0] RGB=[255,255,255] @ MCU[  0,  0]
+
+  Finished Decoding SCAN Data
+    Number of RESTART markers decoded: 0
+    Next position in scan buffer: Offset 0x00021A23.6
+
+ 
+*** Marker: EOI (End of Image) (xFFD9) ***
+  OFFSET: 0x00021A24
+
+
+*** Searching Compression Signatures ***
+
+  Signature:           015C645021E37D3469A6B652789383DB
+  Signature (Rotated): 01D400C125EB43B05762A66347B271F7
+  File Offset:         0 bytes
+  Chroma subsampling:  Gray
+  EXIF Make/Model:     NONE
+  EXIF Makernotes:     NONE
+  EXIF Software:       NONE
+
+  Searching Compression Signatures: (3347 built-in, 0 user(*) )
+
+          EXIF.Make / Software        EXIF.Model                            Quality           Subsamp Match?
+          -------------------------   -----------------------------------   ----------------  --------------
+     SW :[IJG Library              ]                                       [090 Gray        ]                  
+
+    The following IJG-based editors also match this signature:
+     SW :[GIMP                     ]                                       [090 Gray        ]                  
+     SW :[IrfanView                ]                                       [090 Gray        ]                  
+     SW :[idImager                 ]                                       [090 Gray        ]                  
+     SW :[FastStone Image Viewer   ]                                       [090 Gray        ]                  
+     SW :[NeatImage                ]                                       [090 Gray        ]                  
+     SW :[Paint.NET                ]                                       [090 Gray        ]                  
+     SW :[Photomatix               ]                                       [090 Gray        ]                  
+     SW :[XnView                   ]                                       [090 Gray        ]                  
+
+  Based on the analysis of compression characteristics and EXIF metadata:
+
+  ASSESSMENT: Class 1 - Image is processed/edited
+
+  This may be a new software editor for the database.
+  If this file is processed, and editor doesn't appear in list above,
+  PLEASE ADD TO DATABASE with [Tools->Add Camera to DB]
+

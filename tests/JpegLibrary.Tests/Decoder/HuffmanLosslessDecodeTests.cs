@@ -5,16 +5,31 @@ using Xunit;
 
 namespace JpegLibrary.Tests.Decoder
 {
-    public class HuffmanSequentialDecodeTests
+    public class HuffmanLosslessDecodeTests
     {
         public static IEnumerable<object[]> GetTestData()
         {
             string currentDir = Directory.GetCurrentDirectory();
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\baseline\cramps.jpg"),
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless1_s22.jpg")
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_sequential\testorig12.jpg"),
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless2_s22.jpg"),
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless3_s22.jpg"),
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless4_s22.jpg"),
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless5_s22.jpg"),
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless6_s22.jpg"),
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless7_s22.jpg"),
             };
         }
 

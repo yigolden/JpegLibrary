@@ -40,6 +40,39 @@ namespace JpegLibrary.Tests.Decoder
                     Quality = 75
                 }
             };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_sequential\testorig12.jpg"),
+                new Metadata
+                {
+                    Width = 227,
+                    Height = 149,
+                    NumberOfComponents = 3,
+                    Precision = 12,
+                    Quality = 75
+                }
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_progressive\progress.jpg"),
+                new Metadata
+                {
+                    Width = 341,
+                    Height = 486,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 85
+                }
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_lossless\lossless1_s22.jpg"),
+                new Metadata
+                {
+                    Width = 128,
+                    Height = 128,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 0
+                }
+            };
         }
 
         [Theory]
@@ -55,8 +88,11 @@ namespace JpegLibrary.Tests.Decoder
             Assert.Equal(data.Height, decoder.Height);
             Assert.Equal(data.NumberOfComponents, decoder.NumberOfComponents);
             Assert.Equal(data.Precision, decoder.Precision);
-            Assert.True(decoder.TryEstimateQuanlity(out float quality));
-            Assert.Equal(data.Quality, quality, 0);
+            if (data.Quality > 0)
+            {
+                Assert.True(decoder.TryEstimateQuanlity(out float quality));
+                Assert.Equal(data.Quality, quality, 0);
+            }
         }
     }
 }
