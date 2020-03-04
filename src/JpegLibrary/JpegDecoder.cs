@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
-    public sealed partial class JpegDecoder
+    public class JpegDecoder
     {
         private ReadOnlySequence<byte> _inputBuffer;
 
@@ -23,6 +23,7 @@ namespace JpegLibrary
         private byte? _maxVerticalSamplingFactor;
 
         private JpegBlockOutputWriter? _outputWriter;
+        private JpegScanDecoder? _scanDecoder;
 
         private List<JpegQuantizationTable>? _quantizationTables;
         private List<JpegHuffmanDecodingTable>? _huffmanTables;
@@ -42,9 +43,9 @@ namespace JpegLibrary
         }
 
 
-        public void Identify() { Identify(false); }
+        public int Identify() => Identify(false);
 
-        public void Identify(bool loadQuantizationTables)
+        public virtual int Identify(bool loadQuantizationTables)
         {
             if (_inputBuffer.IsEmpty)
             {
@@ -56,75 +57,75 @@ namespace JpegLibrary
             // Reset frame header
             _frameHeader = default;
 
-            bool endOfImageReached = false;
-            while (!endOfImageReached && !reader.IsEmpty)
+            bool toContinue = true;
+            while (toContinue && !reader.IsEmpty)
             {
                 // Read next marker
                 if (!reader.TryReadMarker(out JpegMarker marker))
                 {
                     ThrowInvalidDataException(reader.ConsumedBytes, "No marker found.");
-                    return;
                 }
 
-                switch (marker)
-                {
-                    case JpegMarker.StartOfImage:
-                        break;
-                    case JpegMarker.StartOfFrame0:
-                    case JpegMarker.StartOfFrame1:
-                    case JpegMarker.StartOfFrame2:
-                    case JpegMarker.StartOfFrame3:
-                    case JpegMarker.StartOfFrame9:
-                    case JpegMarker.StartOfFrame10:
-                        ProcessFrameHeader(ref reader, false, false);
-                        break;
-                    case JpegMarker.StartOfFrame5:
-                    case JpegMarker.StartOfFrame6:
-                    case JpegMarker.StartOfFrame7:
-                    case JpegMarker.StartOfFrame11:
-                    case JpegMarker.StartOfFrame13:
-                    case JpegMarker.StartOfFrame14:
-                    case JpegMarker.StartOfFrame15:
-                        ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
-                        return;
-                    case JpegMarker.StartOfScan:
-                        ProcessScanHeader(ref reader, true);
-                        break;
-                    case JpegMarker.DefineRestartInterval:
-                        ProcessDefineRestartInterval(ref reader);
-                        break;
-                    case JpegMarker.DefineQuantizationTable:
-                        ProcessDefineQuantizationTable(ref reader, loadQuantizationTables);
-                        break;
-                    case JpegMarker.DefineRestart0:
-                    case JpegMarker.DefineRestart1:
-                    case JpegMarker.DefineRestart2:
-                    case JpegMarker.DefineRestart3:
-                    case JpegMarker.DefineRestart4:
-                    case JpegMarker.DefineRestart5:
-                    case JpegMarker.DefineRestart6:
-                    case JpegMarker.DefineRestart7:
-                        break;
-                    case JpegMarker.EndOfImage:
-                        endOfImageReached = true;
-                        break;
-                    default:
-                        ProcessOtherMarker(ref reader);
-                        break;
-                }
-
-            }
-
-            if (!endOfImageReached)
-            {
-                ThrowInvalidDataException(reader.ConsumedBytes, "End of image marker was not found.");
-                return;
+                toContinue = ProcessMarkerForIdentification(marker, ref reader, loadQuantizationTables);
             }
 
             if (_frameHeader is null)
             {
                 throw new InvalidOperationException("Frame header was not found.");
             }
+
+            return reader.ConsumedBytes;
+        }
+
+        protected virtual bool ProcessMarkerForIdentification(JpegMarker marker, ref JpegReader reader, bool loadQuantizationTables)
+        {
+            switch (marker)
+            {
+                case JpegMarker.StartOfImage:
+                    break;
+                case JpegMarker.StartOfFrame0:
+                case JpegMarker.StartOfFrame1:
+                case JpegMarker.StartOfFrame2:
+                case JpegMarker.StartOfFrame3:
+                case JpegMarker.StartOfFrame9:
+                case JpegMarker.StartOfFrame10:
+                    ProcessFrameHeader(ref reader, false, false);
+                    break;
+                case JpegMarker.StartOfFrame5:
+                case JpegMarker.StartOfFrame6:
+                case JpegMarker.StartOfFrame7:
+                case JpegMarker.StartOfFrame11:
+                case JpegMarker.StartOfFrame13:
+                case JpegMarker.StartOfFrame14:
+                case JpegMarker.StartOfFrame15:
+                    ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
+                    return false;
+                case JpegMarker.StartOfScan:
+                    ProcessScanHeader(ref reader, true);
+                    break;
+                case JpegMarker.DefineRestartInterval:
+                    ProcessDefineRestartInterval(ref reader);
+                    break;
+                case JpegMarker.DefineQuantizationTable:
+                    ProcessDefineQuantizationTable(ref reader, loadQuantizationTables);
+                    break;
+                case JpegMarker.DefineRestart0:
+                case JpegMarker.DefineRestart1:
+                case JpegMarker.DefineRestart2:
+                case JpegMarker.DefineRestart3:
+                case JpegMarker.DefineRestart4:
+                case JpegMarker.DefineRestart5:
+                case JpegMarker.DefineRestart6:
+                case JpegMarker.DefineRestart7:
+                    break;
+                case JpegMarker.EndOfImage:
+                    return false;
+                default:
+                    ProcessOtherMarker(ref reader);
+                    break;
+            }
+
+            return true;
         }
 
         public bool TryEstimateQuanlity(out float quality)
@@ -423,6 +424,7 @@ namespace JpegLibrary
             }
 
             JpegReader reader = new JpegReader(_inputBuffer);
+            _scanDecoder = null;
 
             // SOI marker
             if (!reader.TryReadStartOfImageMarker())
@@ -431,13 +433,10 @@ namespace JpegLibrary
                 return;
             }
 
-            JpegScanDecoder? scanDecoder = null;
             try
             {
-
-                bool scanRead = false;
-                bool endOfImageReached = false;
-                while (!endOfImageReached && !reader.IsEmpty)
+                bool toContinue = true;
+                while (toContinue && !reader.IsEmpty)
                 {
                     // Read next marker
                     if (!reader.TryReadMarker(out JpegMarker marker))
@@ -446,76 +445,75 @@ namespace JpegLibrary
                         return;
                     }
 
-                    switch (marker)
-                    {
-                        case JpegMarker.StartOfFrame0:
-                        case JpegMarker.StartOfFrame1:
-                        case JpegMarker.StartOfFrame2:
-                        case JpegMarker.StartOfFrame3:
-                        case JpegMarker.StartOfFrame9:
-                        case JpegMarker.StartOfFrame10:
-                            ProcessFrameHeader(ref reader, false, true);
-                            scanDecoder = JpegScanDecoder.Create(marker, this, _frameHeader.GetValueOrDefault());
-                            break;
-                        case JpegMarker.StartOfFrame5:
-                        case JpegMarker.StartOfFrame6:
-                        case JpegMarker.StartOfFrame7:
-                        case JpegMarker.StartOfFrame11:
-                        case JpegMarker.StartOfFrame13:
-                        case JpegMarker.StartOfFrame14:
-                        case JpegMarker.StartOfFrame15:
-                            ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
-                            return;
-                        case JpegMarker.DefineHuffmanTable:
-                            ProcessDefineHuffmanTable(ref reader);
-                            break;
-                        case JpegMarker.DefineArithmeticCodingConditioning:
-                            ProcessDefineArithmeticCodingConditioning(ref reader);
-                            break;
-                        case JpegMarker.DefineQuantizationTable:
-                            ProcessDefineQuantizationTable(ref reader, loadQuantizationTables: true);
-                            break;
-                        case JpegMarker.DefineRestartInterval:
-                            ProcessDefineRestartInterval(ref reader);
-                            break;
-                        case JpegMarker.StartOfScan:
-                            if (scanDecoder is null)
-                            {
-                                ThrowInvalidDataException(reader.ConsumedBytes, "Scan header appears before frame header.");
-                            }
-                            JpegScanHeader scanHeader = ProcessScanHeader(ref reader, false);
-                            scanDecoder!.ProcessScan(ref reader, scanHeader);
-                            scanRead = true;
-                            break;
-                        case JpegMarker.DefineRestart0:
-                        case JpegMarker.DefineRestart1:
-                        case JpegMarker.DefineRestart2:
-                        case JpegMarker.DefineRestart3:
-                        case JpegMarker.DefineRestart4:
-                        case JpegMarker.DefineRestart5:
-                        case JpegMarker.DefineRestart6:
-                        case JpegMarker.DefineRestart7:
-                            break;
-                        case JpegMarker.EndOfImage:
-                            endOfImageReached = true;
-                            break;
-                        default:
-                            ProcessOtherMarker(ref reader);
-                            break;
-                    }
+                    toContinue = ProcessMarkerForDecode(marker, ref reader);
                 }
-
-                if (!scanRead)
-                {
-                    ThrowInvalidDataException(reader.ConsumedBytes, "No image data is read.");
-                    return;
-                }
-
             }
             finally
             {
-                scanDecoder?.Dispose();
+                _scanDecoder?.Dispose();
+                _scanDecoder = null;
             }
+        }
+
+        protected virtual bool ProcessMarkerForDecode(JpegMarker marker, ref JpegReader reader)
+        {
+            switch (marker)
+            {
+                case JpegMarker.StartOfFrame0:
+                case JpegMarker.StartOfFrame1:
+                case JpegMarker.StartOfFrame2:
+                case JpegMarker.StartOfFrame3:
+                case JpegMarker.StartOfFrame9:
+                case JpegMarker.StartOfFrame10:
+                    ProcessFrameHeader(ref reader, false, true);
+                    _scanDecoder = JpegScanDecoder.Create(marker, this, _frameHeader.GetValueOrDefault());
+                    break;
+                case JpegMarker.StartOfFrame5:
+                case JpegMarker.StartOfFrame6:
+                case JpegMarker.StartOfFrame7:
+                case JpegMarker.StartOfFrame11:
+                case JpegMarker.StartOfFrame13:
+                case JpegMarker.StartOfFrame14:
+                case JpegMarker.StartOfFrame15:
+                    ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
+                    break;
+                case JpegMarker.DefineHuffmanTable:
+                    ProcessDefineHuffmanTable(ref reader);
+                    break;
+                case JpegMarker.DefineArithmeticCodingConditioning:
+                    ProcessDefineArithmeticCodingConditioning(ref reader);
+                    break;
+                case JpegMarker.DefineQuantizationTable:
+                    ProcessDefineQuantizationTable(ref reader, loadQuantizationTables: true);
+                    break;
+                case JpegMarker.DefineRestartInterval:
+                    ProcessDefineRestartInterval(ref reader);
+                    break;
+                case JpegMarker.StartOfScan:
+                    if (_scanDecoder is null)
+                    {
+                        ThrowInvalidDataException(reader.ConsumedBytes, "Scan header appears before frame header.");
+                    }
+                    JpegScanHeader scanHeader = ProcessScanHeader(ref reader, false);
+                    _scanDecoder.ProcessScan(ref reader, scanHeader);
+                    break;
+                case JpegMarker.DefineRestart0:
+                case JpegMarker.DefineRestart1:
+                case JpegMarker.DefineRestart2:
+                case JpegMarker.DefineRestart3:
+                case JpegMarker.DefineRestart4:
+                case JpegMarker.DefineRestart5:
+                case JpegMarker.DefineRestart6:
+                case JpegMarker.DefineRestart7:
+                    break;
+                case JpegMarker.EndOfImage:
+                    return false;
+                default:
+                    ProcessOtherMarker(ref reader);
+                    break;
+            }
+
+            return true;
         }
 
         private void ProcessDefineRestartInterval(ref JpegReader reader)
