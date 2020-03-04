@@ -331,6 +331,11 @@ namespace JpegLibrary
         public int Precision => GetFrameHeader().SamplePrecision;
         public int NumberOfComponents => GetFrameHeader().NumberOfComponents;
 
+        public void SetFrameHeader(JpegFrameHeader frameHeader)
+        {
+            _frameHeader = frameHeader;
+        }
+
         public int GetMaximumHorizontalSampling()
         {
             if (_maxHorizontalSamplingFactor.HasValue)
@@ -650,8 +655,13 @@ namespace JpegLibrary
             _quantizationTables?.Clear();
         }
 
-        internal void SetHuffmanTable(JpegHuffmanDecodingTable table)
+        public void SetHuffmanTable(JpegHuffmanDecodingTable table)
         {
+            if (table is null)
+            {
+                throw new ArgumentNullException(nameof(table));
+            }
+
             List<JpegHuffmanDecodingTable>? list = _huffmanTables;
             if (list is null)
             {
@@ -688,8 +698,12 @@ namespace JpegLibrary
             list.Add(table);
         }
 
-        internal void SetQuantizationTable(JpegQuantizationTable table)
+        public void SetQuantizationTable(JpegQuantizationTable table)
         {
+            if (table.IsEmpty)
+            {
+                throw new ArgumentException("No actual quantization table is provided.", nameof(table));
+            }
             List<JpegQuantizationTable>? list = _quantizationTables;
             if (list is null)
             {
@@ -707,7 +721,7 @@ namespace JpegLibrary
             list.Add(table);
         }
 
-        internal JpegHuffmanDecodingTable? GetHuffmanTable(bool isDcTable, byte identifier)
+        public JpegHuffmanDecodingTable? GetHuffmanTable(bool isDcTable, byte identifier)
         {
             List<JpegHuffmanDecodingTable>? huffmanTables = _huffmanTables;
             if (huffmanTables is null)
@@ -743,7 +757,7 @@ namespace JpegLibrary
             return null;
         }
 
-        internal JpegQuantizationTable GetQuantizationTable(byte identifier)
+        public JpegQuantizationTable GetQuantizationTable(byte identifier)
         {
             List<JpegQuantizationTable>? quantizationTables = _quantizationTables;
             if (quantizationTables is null)
