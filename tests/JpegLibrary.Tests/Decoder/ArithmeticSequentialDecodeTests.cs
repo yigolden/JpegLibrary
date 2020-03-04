@@ -16,6 +16,9 @@ namespace JpegLibrary.Tests.Decoder
             yield return new object[] {
                 Path.Join(currentDir, @"Assets\arithmetic_sequential\zackthecat_arith_restart.jpg")
             };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\arithmetic_sequential\yellowcat_arith_restart.jpg")
+            };
         }
 
         [Theory]

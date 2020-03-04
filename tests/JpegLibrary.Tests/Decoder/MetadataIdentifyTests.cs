@@ -52,6 +52,17 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
+                Path.Join(currentDir, @"Assets\huffman_progressive\yellowcat_progressive_restart.jpg"),
+                new Metadata
+                {
+                    Width = 720,
+                    Height = 540,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 75
+                }
+            };
+            yield return new object[] {
                 Path.Join(currentDir, @"Assets\huffman_progressive\progress.jpg"),
                 new Metadata
                 {
@@ -74,7 +85,29 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_arith_restart.jpg"),
+                Path.Join(currentDir, @"Assets\arithmetic_sequential\yellowcat_arith_restart.jpg"),
+                new Metadata
+                {
+                    Width = 720,
+                    Height = 540,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 75
+                }
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith.jpg"),
+                new Metadata
+                {
+                    Width = 720,
+                    Height = 540,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 75
+                }
+            };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith_restart.jpg"),
                 new Metadata
                 {
                     Width = 720,
