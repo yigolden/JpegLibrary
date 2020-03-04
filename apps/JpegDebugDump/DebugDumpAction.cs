@@ -18,10 +18,9 @@ namespace JpegDebugDump
                 Console.WriteLine("Input file are not specified.");
                 return Task.FromResult(1);
             }
-            if (output is null)
+            if (string.IsNullOrEmpty(output))
             {
-                Console.WriteLine("Output file is not specified");
-                return Task.FromResult(1);
+                output = source.FullName;
             }
 
             byte[] input = File.ReadAllBytes(source.FullName);

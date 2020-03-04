@@ -48,7 +48,7 @@ namespace JpegDebugDump
                 new Option(new[] { "--output", "--out", "-o" }, "Output file base path.")
                 {
                     Name = "output",
-                    Argument = new Argument<string>() { Arity = ArgumentArity.ExactlyOne }
+                    Argument = new Argument<string>() { Arity = ArgumentArity.ZeroOrOne }
                 };
         }
     }
