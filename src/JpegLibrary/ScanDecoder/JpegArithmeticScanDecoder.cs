@@ -90,10 +90,6 @@ namespace JpegLibrary.ScanDecoder
                 }
                 JpegArithmeticDecodingTable? dcTable = Decoder.GetArithmeticTable(true, scanComponenet.DcEntropyCodingTableSelector); ;
                 JpegArithmeticDecodingTable? acTable = Decoder.GetArithmeticTable(false, scanComponenet.AcEntropyCodingTableSelector);
-                if (dcTable is null || acTable is null)
-                {
-                    ThrowInvalidDataException();
-                }
                 component.ComponentIndex = componentIndex;
                 component.HorizontalSamplingFactor = frameComponent.GetValueOrDefault().HorizontalSamplingFactor;
                 component.VerticalSamplingFactor = frameComponent.GetValueOrDefault().VerticalSamplingFactor;
@@ -104,8 +100,8 @@ namespace JpegLibrary.ScanDecoder
                 component.VerticalSubsamplingFactor = maxVerticalSampling / component.VerticalSamplingFactor;
                 component.DcPredictor = 0;
                 component.DcContext = 0;
-                component.DcStatistics = CreateOrGetStatisticsBin(true, dcTable.Identifier, true);
-                component.AcStatistics = CreateOrGetStatisticsBin(false, acTable.Identifier, true);
+                component.DcStatistics = dcTable is null ? null : CreateOrGetStatisticsBin(true, dcTable.Identifier);
+                component.AcStatistics = acTable is null ? null : CreateOrGetStatisticsBin(false, acTable.Identifier);
             }
 
             return scanHeader.NumberOfComponents;

@@ -10,10 +10,10 @@ namespace JpegLibrary.ScanDecoder
     {
         private readonly JpegFrameHeader _frameHeader;
 
-        private readonly ushort _restartInterval;
         private readonly int _mcusPerLine;
         private readonly int _mcusPerColumn;
         private readonly int _levelShift;
+        private ushort _restartInterval;
         private int _mcusBeforeRestart;
         private int _eobrun;
 
@@ -34,7 +34,6 @@ namespace JpegLibrary.ScanDecoder
                 maxVerticalSampling = Math.Max(maxVerticalSampling, currentFrameComponent.VerticalSamplingFactor);
             }
 
-            _restartInterval = decoder.GetRestartInterval();
             _mcusPerLine = (frameHeader.SamplesPerLine + 8 * maxHorizontalSampling - 1) / (8 * maxHorizontalSampling);
             _mcusPerColumn = (frameHeader.NumberOfLines + 8 * maxVerticalSampling - 1) / (8 * maxVerticalSampling);
             _levelShift = 1 << (frameHeader.SamplePrecision - 1);
@@ -70,6 +69,7 @@ namespace JpegLibrary.ScanDecoder
             // Resolve each component
             Span<JpegHuffmanDecodingComponent> components = _components.AsSpan(0, InitDecodeComponents(_frameHeader, scanHeader, _components));
 
+            _restartInterval = Decoder.GetRestartInterval();
             _mcusBeforeRestart = _restartInterval;
             _eobrun = 0;
 

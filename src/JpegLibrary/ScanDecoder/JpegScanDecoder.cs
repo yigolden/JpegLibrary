@@ -28,6 +28,8 @@ namespace JpegLibrary.ScanDecoder
                     return new JpegHuffmanLosslessScanDecoder(decoder, header);
                 case JpegMarker.StartOfFrame9:
                     return new JpegArithmeticSequentialScanDecoder(decoder, header);
+                case JpegMarker.StartOfFrame10:
+                    return new JpegArithmeticProgressiveScanDecoder(decoder, header);
                 default:
                     return null;
             }

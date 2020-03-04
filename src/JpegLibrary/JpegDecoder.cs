@@ -71,24 +71,16 @@ namespace JpegLibrary
                     case JpegMarker.StartOfImage:
                         break;
                     case JpegMarker.StartOfFrame0:
-                        ProcessFrameHeader(ref reader, false, false);
-                        break;
                     case JpegMarker.StartOfFrame1:
-                        ProcessFrameHeader(ref reader, false, false);
-                        break;
                     case JpegMarker.StartOfFrame2:
-                        ProcessFrameHeader(ref reader, false, false);
-                        break;
                     case JpegMarker.StartOfFrame3:
-                        ProcessFrameHeader(ref reader, false, false);
-                        break;
                     case JpegMarker.StartOfFrame9:
+                    case JpegMarker.StartOfFrame10:
                         ProcessFrameHeader(ref reader, false, false);
                         break;
                     case JpegMarker.StartOfFrame5:
                     case JpegMarker.StartOfFrame6:
                     case JpegMarker.StartOfFrame7:
-                    case JpegMarker.StartOfFrame10:
                     case JpegMarker.StartOfFrame11:
                     case JpegMarker.StartOfFrame13:
                     case JpegMarker.StartOfFrame14:
@@ -456,13 +448,13 @@ namespace JpegLibrary
                         case JpegMarker.StartOfFrame2:
                         case JpegMarker.StartOfFrame3:
                         case JpegMarker.StartOfFrame9:
+                        case JpegMarker.StartOfFrame10:
                             ProcessFrameHeader(ref reader, false, true);
                             scanDecoder = JpegScanDecoder.Create(marker, this, _frameHeader.GetValueOrDefault());
                             break;
                         case JpegMarker.StartOfFrame5:
                         case JpegMarker.StartOfFrame6:
                         case JpegMarker.StartOfFrame7:
-                        case JpegMarker.StartOfFrame10:
                         case JpegMarker.StartOfFrame11:
                         case JpegMarker.StartOfFrame13:
                         case JpegMarker.StartOfFrame14:

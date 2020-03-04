@@ -73,6 +73,17 @@ namespace JpegLibrary.Tests.Decoder
                     Quality = 0
                 }
             };
+            yield return new object[] {
+                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_arith_restart.jpg"),
+                new Metadata
+                {
+                    Width = 720,
+                    Height = 540,
+                    NumberOfComponents = 3,
+                    Precision = 8,
+                    Quality = 75
+                }
+            };
         }
 
         [Theory]

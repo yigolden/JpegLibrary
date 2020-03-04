@@ -68,6 +68,16 @@ namespace JpegLibrary.ScanDecoder
             // Resolve each component
             Span<JpegArithmeticDecodingComponent> components = _components.AsSpan(0, InitDecodeComponents(frameHeader, scanHeader, _components));
 
+            foreach (JpegArithmeticDecodingComponent component in _components)
+            {
+                component.DcPredictor = 0;
+                component.DcContext = 0;
+                component.DcStatistics?.Reset();
+                component.AcStatistics?.Reset();
+            }
+
+            Reset();
+
             // Prepare
             int maxHorizontalSampling = _maxHorizontalSampling;
             int maxVerticalSampling = _maxVerticalSampling;
