@@ -83,7 +83,7 @@ namespace JpegDecode
         private static void ReadAllBytes(Stream stream, IBufferWriter<byte> writer)
         {
             long length = stream.Length;
-            while (length >= 0)
+            while (length > 0)
             {
                 int readSize = (int)Math.Min(length, BufferSize);
                 Span<byte> buffer = writer.GetSpan(readSize);
