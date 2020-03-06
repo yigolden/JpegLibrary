@@ -5,10 +5,19 @@ using System.Buffers;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// JPEG quantization table.
+    /// </summary>
     public readonly struct JpegQuantizationTable
     {
         private readonly ushort[] _elements;
 
+        /// <summary>
+        /// Initialize a quantization table object.
+        /// </summary>
+        /// <param name="elementPrecision">The element precision. 0 for 8 bit precision. 1 for 12 bit precision.</param>
+        /// <param name="identifier">The identifier of the quantization table.</param>
+        /// <param name="elements">The elements of the quantization table in zig-zag order.</param>
         public JpegQuantizationTable(byte elementPrecision, byte identifier, ushort[] elements)
         {
             ElementPrecision = elementPrecision;
@@ -17,17 +26,33 @@ namespace JpegLibrary
 
             if (elements.Length != 64)
             {
-                throw new ArgumentException("elements.Length must be 64.");
+                throw new ArgumentException("The length of elements must be 64.");
             }
         }
 
+        /// <summary>
+        /// The element precision. 0 for 8 bit precision. 1 for 12 bit precision.
+        /// </summary>
         public byte ElementPrecision { get; }
+
+        /// <summary>
+        /// The identifier of the quantization table.
+        /// </summary>
         public byte Identifier { get; }
 
+        /// <summary>
+        /// Gets the elements of the quantization table in zig-zag order.
+        /// </summary>
         public ReadOnlySpan<ushort> Elements => _elements;
 
+        /// <summary>
+        /// Gets whether this quantization is empty (not initialized).
+        /// </summary>
         public bool IsEmpty => ElementPrecision == 0 && Identifier == 0 && _elements is null;
 
+        /// <summary>
+        /// Get the byte count required when writing this quantization table into JPEG stream.
+        /// </summary>
         public byte BytesRequired => ElementPrecision == 0 ? (byte)(64 + 1) : (byte)(128 + 1);
 
         public static bool TryParse(ReadOnlySequence<byte> buffer, out JpegQuantizationTable quantizationTable, out int bytesConsumed)

@@ -6,7 +6,10 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
-    internal static class JpegZigZag
+    /// <summary>
+    /// This class provide methods for converting between natural order and zig-zag order.
+    /// </summary>
+    public static class JpegZigZag
     {
         private static ReadOnlySpan<byte> s_blockToBuffer => new byte[]
         {
@@ -32,18 +35,64 @@ namespace JpegLibrary
             53, 60, 61, 54, 47, 55, 62, 63
         };
 
+        /// <summary>
+        /// Convert index of natural order into zig-zag order.
+        /// </summary>
+        /// <param name="index">Index of natural order starting from zero.</param>
+        /// <returns>Index of zig-zag order.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int BlockIndexToBuffer(int index)
+        public static int InternalBlockIndexToBuffer(int index)
         {
             Debug.Assert((uint)index < 64);
             return s_blockToBuffer[index];
         }
 
+        /// <summary>
+        /// Convert index of zig-zag order into natural order.
+        /// </summary>
+        /// <param name="index">Index of zig-zag order starting from zero.</param>
+        /// <returns>Index of natural order.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int BufferIndexToBlock(int index)
+        public static int InternalBufferIndexToBlock(int index)
         {
             Debug.Assert((uint)index < 64);
             return s_bufferToBlock[index];
         }
+
+        /// <summary>
+        /// Convert index of natural order into zig-zag order.
+        /// </summary>
+        /// <param name="index">Index of natural order starting from zero.</param>
+        /// <returns>Index of zig-zag order.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int BlockIndexToBuffer(int index)
+        {
+            if ((uint)index >= s_blockToBuffer.Length)
+            {
+                ThrowArgumentOutOfRangeException(nameof(index));
+            }
+            return s_blockToBuffer[index];
+        }
+
+        /// <summary>
+        /// Convert index of zig-zag order into natural order.
+        /// </summary>
+        /// <param name="index">Index of zig-zag order starting from zero.</param>
+        /// <returns>Index of natural order.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int BufferIndexToBlock(int index)
+        {
+            if ((uint)index >= s_bufferToBlock.Length)
+            {
+                ThrowArgumentOutOfRangeException(nameof(index));
+            }
+            return s_bufferToBlock[index];
+        }
+
+        private static void ThrowArgumentOutOfRangeException(string parameterName)
+        {
+            throw new ArgumentOutOfRangeException(nameof(parameterName));
+        }
+
     }
 }

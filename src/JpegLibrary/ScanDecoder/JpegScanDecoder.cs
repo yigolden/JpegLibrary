@@ -64,7 +64,7 @@ namespace JpegLibrary.ScanDecoder
 
             for (int i = 0; i < 64; i++)
             {
-                Unsafe.Add(ref destinationRef, JpegZigZag.BufferIndexToBlock(i)) = Unsafe.Add(ref elementRef, i) * Unsafe.Add(ref sourceRef, i);
+                Unsafe.Add(ref destinationRef, JpegZigZag.InternalBufferIndexToBlock(i)) = Unsafe.Add(ref elementRef, i) * Unsafe.Add(ref sourceRef, i);
             }
         }
 

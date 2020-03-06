@@ -708,7 +708,7 @@ namespace JpegLibrary
 
             for (int i = 0; i < 64; i++)
             {
-                float coefficient = Unsafe.Add(ref sourceRef, JpegZigZag.BufferIndexToBlock(i));
+                float coefficient = Unsafe.Add(ref sourceRef, JpegZigZag.InternalBufferIndexToBlock(i));
                 ushort element = Unsafe.Add(ref elementRef, i);
                 Unsafe.Add(ref destinationRef, i) = JpegMathHelper.RoundToInt16(coefficient / element);
             }
