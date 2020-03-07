@@ -55,6 +55,13 @@ namespace JpegLibrary
         /// </summary>
         public byte BytesRequired => ElementPrecision == 0 ? (byte)(64 + 1) : (byte)(128 + 1);
 
+        /// <summary>
+        /// Parse the quantization table from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="quantizationTable">The quantization table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, out JpegQuantizationTable quantizationTable, out int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -83,6 +90,13 @@ namespace JpegLibrary
             return TryParse((byte)(b >> 4), (byte)(b & 0xf), buffer.Slice(1), out quantizationTable, ref bytesConsumed);
         }
 
+        /// <summary>
+        /// Parse the quantization table from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="quantizationTable">The quantization table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, out JpegQuantizationTable quantizationTable, out int bytesConsumed)
         {
             bytesConsumed = 0;
@@ -98,6 +112,15 @@ namespace JpegLibrary
             return TryParse((byte)(b >> 4), (byte)(b & 0xf), buffer.Slice(1), out quantizationTable, ref bytesConsumed);
         }
 
+        /// <summary>
+        /// Parse the quantization table from the buffer.
+        /// </summary>
+        /// <param name="precision">The precision of the quantization table.</param>
+        /// <param name="identifier">The identifier of the quantization table.</param>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="quantizationTable">The quantization table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(byte precision, byte identifier, ReadOnlySequence<byte> buffer, out JpegQuantizationTable quantizationTable, ref int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -155,6 +178,15 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Parse the quantization table from the buffer.
+        /// </summary>
+        /// <param name="precision">The precision of the quantization table.</param>
+        /// <param name="identifier">The identifier of the quantization table.</param>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="quantizationTable">The quantization table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(byte precision, byte identifier, ReadOnlySpan<byte> buffer, out JpegQuantizationTable quantizationTable, ref int bytesConsumed)
         {
             ushort[] elements;
@@ -198,6 +230,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write the quantization table into the buffer specified.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        /// <param name="bytesWritten">The count of bytes written.</param>
+        /// <returns>True if the destination buffer is large enough.</returns>
         public bool TryWrite(Span<byte> buffer, out int bytesWritten)
         {
             bytesWritten = 0;

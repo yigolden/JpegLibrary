@@ -8,21 +8,34 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// A builder to build <see cref="JpegHuffmanEncodingTable"/>
+    /// </summary>
     public class JpegHuffmanEncodingTableBuilder
     {
         private int[] _frequencies;
 
+        /// <summary>
+        /// Initialize the Huffman table builder.
+        /// </summary>
         public JpegHuffmanEncodingTableBuilder()
         {
             _frequencies = new int[256];
         }
 
+        /// <summary>
+        /// Increment frequency for the specified symbol.
+        /// </summary>
+        /// <param name="symbol">The symbol to record.</param>
         public void IncrementCodeCount(int symbol)
         {
             Debug.Assert(symbol <= 255);
             _frequencies[symbol]++;
         }
 
+        /// <summary>
+        /// Reset the frequencies of all symbols to zero.
+        /// </summary>
         public void Reset()
         {
             _frequencies.AsSpan().Clear();
@@ -41,6 +54,11 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Build the <see cref="JpegHuffmanEncodingTable"/>.
+        /// </summary>
+        /// <param name="optimal">True to use the optimal algorithm. False to use the modified version of the algorithm specified in ITU-T81.</param>
+        /// <returns>The Huffman encoding table.</returns>
         public JpegHuffmanEncodingTable Build(bool optimal = false)
         {
             return optimal ? BuildUsingPackageMerge() : BuildUsingStandardMethod();
@@ -148,7 +166,7 @@ namespace JpegLibrary
             Array.Sort(symbols, (x, y) => x.CodeSize.CompareTo(y.CodeSize));
 
             // Figure K.4 – Sorting of input values according to code size
-            JpegCanonicalCode[] codes = BuildCanonicalCode(bits, symbols.AsSpan(0, codeCount));
+            JpegHuffmanCanonicalCode[] codes = BuildCanonicalCode(bits, symbols.AsSpan(0, codeCount));
 
             return new JpegHuffmanEncodingTable(codes);
         }
@@ -225,10 +243,10 @@ namespace JpegLibrary
             }
         }
 
-        private static JpegCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<byte> bits, ReadOnlySpan<Symbol> symbols)
+        private static JpegHuffmanCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<byte> bits, ReadOnlySpan<Symbol> symbols)
         {
             int codeCount = symbols.Length;
-            var codes = new JpegCanonicalCode[codeCount];
+            var codes = new JpegHuffmanCanonicalCode[codeCount];
 
             int currentCodeLength = 1;
             ref byte codeLengthsRef = ref MemoryMarshal.GetReference(bits);
@@ -251,7 +269,7 @@ namespace JpegLibrary
 
             for (int i = 1; i < codes.Length; i++)
             {
-                ref JpegCanonicalCode code = ref codes[i];
+                ref JpegHuffmanCanonicalCode code = ref codes[i];
 
                 if (code.CodeLength > bitCount)
                 {
@@ -327,7 +345,7 @@ namespace JpegLibrary
                 symbols[i] = symbols[i + 1];
             }
 
-            JpegCanonicalCode[] codes = BuildCanonicalCode(symbols.AsSpan(0, codeCount));
+            JpegHuffmanCanonicalCode[] codes = BuildCanonicalCode(symbols.AsSpan(0, codeCount));
 
             return new JpegHuffmanEncodingTable(codes);
         }
@@ -447,10 +465,10 @@ namespace JpegLibrary
             }
         }
 
-        private static JpegCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<Symbol> symbols)
+        private static JpegHuffmanCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<Symbol> symbols)
         {
             int codeCount = symbols.Length;
-            var codes = new JpegCanonicalCode[codeCount];
+            var codes = new JpegHuffmanCanonicalCode[codeCount];
 
             for (int i = 0; i < codes.Length; i++)
             {
@@ -463,7 +481,7 @@ namespace JpegLibrary
 
             for (int i = 1; i < codes.Length; i++)
             {
-                ref JpegCanonicalCode code = ref codes[i];
+                ref JpegHuffmanCanonicalCode code = ref codes[i];
 
                 if (code.CodeLength > bitCount)
                 {

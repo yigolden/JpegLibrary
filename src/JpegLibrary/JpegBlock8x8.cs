@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// Represents a 8x8 spatial block.
+    /// </summary>
     public unsafe struct JpegBlock8x8
     {
         private fixed short _data[64];
@@ -29,6 +32,11 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element.</param>
+        /// <returns>The element value.</returns>
         public short this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -54,6 +62,13 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Gets or sets the element at the specified position.
+        /// </summary>
+        /// <param name="index">The index of the element.</param>
+        /// <param name="x">The row index of the block.</param>
+        /// <param name="y">The column index of the block.</param>
+        /// <returns>The element value.</returns>
         public short this[int x, int y]
         {
             get => this[(y * 8) + x];

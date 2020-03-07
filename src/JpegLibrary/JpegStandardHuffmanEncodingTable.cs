@@ -81,10 +81,10 @@ namespace JpegLibrary
             0xf9, 0xfa
         };
 
-        private static JpegCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<byte> codeLengths, ReadOnlySpan<byte> codeValues)
+        private static JpegHuffmanCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<byte> codeLengths, ReadOnlySpan<byte> codeValues)
         {
             int codeCount = codeValues.Length;
-            var codes = new JpegCanonicalCode[codeCount];
+            var codes = new JpegHuffmanCanonicalCode[codeCount];
 
             Span<byte> codeLengthsBuffer = stackalloc byte[16];
             codeLengths.CopyTo(codeLengthsBuffer);
@@ -110,7 +110,7 @@ namespace JpegLibrary
 
             for (int i = 1; i < codes.Length; i++)
             {
-                ref JpegCanonicalCode code = ref codes[i];
+                ref JpegHuffmanCanonicalCode code = ref codes[i];
 
                 if (code.CodeLength > bitCount)
                 {

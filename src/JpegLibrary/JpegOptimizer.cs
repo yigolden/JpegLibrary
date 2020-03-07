@@ -489,7 +489,7 @@ namespace JpegLibrary
             JpegHuffmanDecodingTable.Entry entry = table.Lookup(bits);
             bitsRead = Math.Min(entry.CodeSize, bitsRead);
             _ = reader.TryAdvanceBits(bitsRead, out _);
-            return entry.CodeValue;
+            return entry.SymbolValue;
         }
 
 

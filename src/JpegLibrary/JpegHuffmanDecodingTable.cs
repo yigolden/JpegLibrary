@@ -9,15 +9,25 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// This class represents a Huffman table in the JPEG stream. It supports decoding of Huffman symbol from JPEG stream.
+    /// </summary>
     public class JpegHuffmanDecodingTable
     {
-        public JpegHuffmanDecodingTable(byte tableClass, byte identifier)
+        internal JpegHuffmanDecodingTable(byte tableClass, byte identifier)
         {
             TableClass = tableClass;
             Identifier = identifier;
         }
 
+        /// <summary>
+        /// The class of this table.
+        /// </summary>
         public byte TableClass { get; }
+
+        /// <summary>
+        /// The identifier of this table.
+        /// </summary>
         public byte Identifier { get; }
 
         /// <summary>
@@ -37,12 +47,28 @@ namespace JpegLibrary
 
         private Entry[]? _lookaheadTable;
 
+        /// <summary>
+        /// A Huffman symbol.
+        /// </summary>
         public struct Entry
         {
-            public byte CodeSize;
-            public byte CodeValue;
+            /// <summary>
+            /// The length of the code.
+            /// </summary>
+            public byte CodeSize { get; set; }
+
+            /// <summary>
+            /// The actual symbol.
+            /// </summary>
+            public byte SymbolValue { get; set; }
         }
 
+        /// <summary>
+        /// Lookup a Huffman code from the table.
+        /// </summary>
+        /// <param name="code16bit">The next 16 bit in the stream.</param>
+        /// <exception cref="InvalidDataException">No symbol is decoded.</exception>
+        /// <returns>The Huffman symbol.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entry Lookup(int code16bit)
         {
@@ -82,10 +108,17 @@ namespace JpegLibrary
             return new Entry
             {
                 CodeSize = (byte)size,
-                CodeValue = _values![(_valOffset![size] + code16bit) & 0xFF]
+                SymbolValue = _values![(_valOffset![size] + code16bit) & 0xFF]
             };
         }
 
+        /// <summary>
+        /// Parse the Huffman table from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="huffmanTable">The Huffman table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the Huffman table is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, out int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -113,6 +146,13 @@ namespace JpegLibrary
             return TryParse((byte)(tableClassAndIdentifier >> 4), (byte)(tableClassAndIdentifier & 0xf), buffer.Slice(1), out huffmanTable, ref bytesConsumed);
         }
 
+        /// <summary>
+        /// Parse the Huffman table from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="huffmanTable">The Huffman table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the Huffman table is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, out int bytesConsumed)
         {
             bytesConsumed = 0;
@@ -128,6 +168,15 @@ namespace JpegLibrary
             return TryParse((byte)(tableClassAndIdentifier >> 4), (byte)(tableClassAndIdentifier & 0xf), buffer.Slice(1), out huffmanTable, ref bytesConsumed);
         }
 
+        /// <summary>
+        /// Parse the Huffman table from the buffer.
+        /// </summary>
+        /// <param name="identifier">The identifier of the table.</param>
+        /// <param name="tableClass">The class of the table.</param>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="huffmanTable">The Huffman table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the Huffman table is successfully parsed.</returns>
         public static bool TryParse(byte tableClass, byte identifier, ReadOnlySequence<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, ref int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -186,6 +235,15 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Parse the Huffman table from the buffer.
+        /// </summary>
+        /// <param name="identifier">The identifier of the table.</param>
+        /// <param name="tableClass">The class of the table.</param>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="huffmanTable">The Huffman table parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the Huffman table is successfully parsed.</returns>
         public static bool TryParse(byte tableClass, byte identifier, ReadOnlySpan<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, ref int bytesConsumed)
         {
             if (buffer.Length < 16)
@@ -325,7 +383,7 @@ namespace JpegLibrary
             code = (byte)(code << freeBitCount);
             for (int i = 0; i < (1 << freeBitCount); i++)
             {
-                table[code + i] = new Entry { CodeSize = codeSize, CodeValue = value };
+                table[code + i] = new Entry { CodeSize = codeSize, SymbolValue = value };
             }
         }
     }
