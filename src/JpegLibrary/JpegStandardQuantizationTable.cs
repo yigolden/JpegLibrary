@@ -4,6 +4,9 @@ using System;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// Helper class for generating standard JPEG quantization table.
+    /// </summary>
     public static class JpegStandardQuantizationTable
     {
         private static readonly ushort[] s_luminanceTable = new ushort[]
@@ -30,16 +33,34 @@ namespace JpegLibrary
             99, 99, 99, 99, 99, 99, 99, 99
         };
 
+        /// <summary>
+        /// Gets the standard quantization for luminance component.
+        /// </summary>
+        /// <param name="elementPrecision">The element precision.</param>
+        /// <param name="identifier">The identifier of the table.</param>
+        /// <returns>The standard quantization table.</returns>
         public static JpegQuantizationTable GetLuminanceTable(JpegElementPrecision elementPrecision, byte identifier)
         {
             return new JpegQuantizationTable((byte)elementPrecision, identifier, s_luminanceTable);
         }
 
+        /// <summary>
+        /// Gets the standard quantization for chrominance component.
+        /// </summary>
+        /// <param name="elementPrecision">The element precision.</param>
+        /// <param name="identifier">The identifier of the table.</param>
+        /// <returns>The standard quantization table.</returns>
         public static JpegQuantizationTable GetChrominanceTable(JpegElementPrecision elementPrecision, byte identifier)
         {
             return new JpegQuantizationTable((byte)elementPrecision, identifier, s_chrominanceTable);
         }
 
+        /// <summary>
+        /// Scale the quantization table to match the specified JPEG quality.
+        /// </summary>
+        /// <param name="quantizationTable">The standard quantization to scale.</param>
+        /// <param name="quality">The quality factor.</param>
+        /// <returns>The scaled quantization table.</returns>
         public static JpegQuantizationTable ScaleByQuality(JpegQuantizationTable quantizationTable, int quality)
         {
             if (quantizationTable.IsEmpty)

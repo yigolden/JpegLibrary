@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// Helper class for acquiring standard JPEG huffman encoding table.
+    /// </summary>
     public class JpegStandardHuffmanEncodingTable
     {
         private static ReadOnlySpan<byte> LuminanceDCCodeLengths => new byte[] { 0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
@@ -131,6 +134,10 @@ namespace JpegLibrary
         private static JpegHuffmanEncodingTable? s_chrominanceDCTable;
         private static JpegHuffmanEncodingTable? s_chrominanceACTable;
 
+        /// <summary>
+        /// Gets the standard Huffman encoding table for DC coefficient of luminance component.
+        /// </summary>
+        /// <returns>The Huffman encoding table for DC coefficient of luminance component.</returns>
         public static JpegHuffmanEncodingTable GetLuminanceDCTable()
         {
             JpegHuffmanEncodingTable? table = s_luminanceDCTable;
@@ -141,6 +148,10 @@ namespace JpegLibrary
             return table;
         }
 
+        /// <summary>
+        /// Gets the standard Huffman encoding table for RLE-encoded AC coefficient of chrominance component.
+        /// </summary>
+        /// <returns>The Huffman encoding table for RLE-encoded AC coefficient of chrominance component.</returns>
         public static JpegHuffmanEncodingTable GetLuminanceACTable()
         {
             JpegHuffmanEncodingTable? table = s_luminanceACTable;
@@ -151,6 +162,10 @@ namespace JpegLibrary
             return table;
         }
 
+        /// <summary>
+        /// Gets the standard Huffman encoding table for DC coefficient of chrominance component.
+        /// </summary>
+        /// <returns>The Huffman encoding table for DC coefficient of chrominance component.</returns>
         public static JpegHuffmanEncodingTable GetChrominanceDCTable()
         {
             JpegHuffmanEncodingTable? table = s_chrominanceDCTable;
@@ -161,6 +176,10 @@ namespace JpegLibrary
             return table;
         }
 
+        /// <summary>
+        /// Gets the standard Huffman encoding table for RLE-encoded AC coefficient of chrominance component.
+        /// </summary>
+        /// <returns>The Huffman encoding table for RLE-encoded AC coefficient of chrominance component.</returns>
         public static JpegHuffmanEncodingTable GetChrominanceACTable()
         {
             JpegHuffmanEncodingTable? table = s_chrominanceACTable;

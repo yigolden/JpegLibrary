@@ -7,29 +7,52 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// A mutable struct to read markers and other content from JPEG stream.
+    /// </summary>
     public struct JpegReader
     {
         private ReadOnlySequence<byte> _data;
         private int _initialLength;
 
+        /// <summary>
+        /// Initialize the reader with the specified data stream.
+        /// </summary>
+        /// <param name="data">The stream to read from.</param>
         public JpegReader(ReadOnlySequence<byte> data)
         {
             _data = data;
             _initialLength = checked((int)data.Length);
         }
 
+        /// <summary>
+        /// Initialize the reader with the specified data stream.
+        /// </summary>
+        /// <param name="data">The stream to read from.</param>
         public JpegReader(ReadOnlyMemory<byte> data)
         {
             _data = new ReadOnlySequence<byte>(data);
             _initialLength = data.Length;
         }
 
+        /// <summary>
+        /// Gets whether there is any remaining data to read.
+        /// </summary>
         public bool IsEmpty => _data.IsEmpty;
 
+        /// <summary>
+        /// Gets the remaining byte count for the reader to read.
+        /// </summary>
         public int RemainingByteCount => (int)_data.Length;
 
-        public int ConsumedBytes => _initialLength - (int)_data.Length;
+        /// <summary>
+        /// Gets the total consumed byte count from the start of the stream.
+        /// </summary>
+        public int ConsumedByteCount => _initialLength - (int)_data.Length;
 
+        /// <summary>
+        /// Gets the remaining data to read.
+        /// </summary>
         public ReadOnlySequence<byte> RemainingBytes => _data;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,6 +90,10 @@ namespace JpegLibrary
             return false;
         }
 
+        /// <summary>
+        /// Read the StartOfImage marker.
+        /// </summary>
+        /// <returns>True if the immediately following bytes in the stream is StartOfImage marker.</returns>
         public bool TryReadStartOfImageMarker()
         {
             Span<byte> buffer = stackalloc byte[2];
@@ -83,6 +110,11 @@ namespace JpegLibrary
             return false;
         }
 
+        /// <summary>
+        /// Read the next marker.
+        /// </summary>
+        /// <param name="marker">The next marker in the stream.</param>
+        /// <returns>True if the immediately following bytes in the stream is a marker.</returns>
         public bool TryReadMarker(out JpegMarker marker)
         {
             Span<byte> buffer = stackalloc byte[2];
@@ -123,6 +155,11 @@ namespace JpegLibrary
             return false;
         }
 
+        /// <summary>
+        /// Read the next two bytes as the length field.
+        /// </summary>
+        /// <param name="length">The length represented by the next two bytes.</param>
+        /// <returns>True if the remaining stream contains at least two bytes.</returns>
         public bool TryReadLength(out ushort length)
         {
             Span<byte> buffer = stackalloc byte[2];
@@ -136,6 +173,11 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Read the next two bytes as the length field, but the stream offset is not advanced.
+        /// </summary>
+        /// <param name="length">The length represented by the next two bytes.</param>
+        /// <returns>True if the remaining stream contains at least two bytes.</returns>
         public bool TryPeekLength(out ushort length)
         {
             Span<byte> buffer = stackalloc byte[2];
@@ -148,6 +190,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Read bytes from the stream.
+        /// </summary>
+        /// <param name="length">The length of bytes to read.</param>
+        /// <param name="bytes">The bytes read from the stream.</param>
+        /// <returns>True if the length of the remaining stream is not less then the <paramref name="length"/> parameter.</returns>
         public bool TryReadBytes(int length, out ReadOnlySequence<byte> bytes)
         {
             ReadOnlySequence<byte> buffer = _data;
@@ -161,6 +209,29 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Read bytes from the stream, but the stream offset is not advanced.
+        /// </summary>
+        /// <param name="length">The length of bytes to read.</param>
+        /// <param name="bytes">The bytes read from the stream.</param>
+        /// <returns>True if the length of the remaining stream is not less then the <paramref name="length"/> parameter.</returns>
+        public bool TryPeekBytes(int length, out ReadOnlySequence<byte> bytes)
+        {
+            ReadOnlySequence<byte> buffer = _data;
+            if (buffer.Length < length)
+            {
+                bytes = default;
+                return false;
+            }
+            bytes = buffer.Slice(0, length);
+            return true;
+        }
+
+        /// <summary>
+        /// Advance the stream by the specified byte count.
+        /// </summary>
+        /// <param name="length">The byte count to advance by.</param>
+        /// <returns>True if the length of the remaining stream is not less then the <paramref name="length"/> parameter.</returns>
         public bool TryAdvance(int length)
         {
             if (_data.Length < length)

@@ -187,8 +187,6 @@ namespace JpegLibrary.ScanDecoder
                 }
             }
 
-
-
             bitReader.AdvanceAlignByte();
             int bytesConsumed = reader.RemainingByteCount - bitReader.RemainingBits / 8;
             if (bitReader.TryPeekMarker() != 0)

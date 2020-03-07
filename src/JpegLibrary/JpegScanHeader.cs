@@ -5,8 +5,20 @@ using System.Buffers;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// The scan header defined by StartOfScan marker.
+    /// </summary>
     public readonly struct JpegScanHeader
     {
+        /// <summary>
+        /// Initialize the scan header.
+        /// </summary>
+        /// <param name="numberOfComponents">The number of component in this scan.</param>
+        /// <param name="components">Parameters for each component.</param>
+        /// <param name="startOfSpectralSelection">Start of spectral selection.</param>
+        /// <param name="endOfSpectralSelection">End of spectral selection.</param>
+        /// <param name="successiveApproximationBitPositionHigh">Successive approximation bit position (high).</param>
+        /// <param name="successiveApproximationBitPositionLow">Successive approximation bit position (low).</param>
         public JpegScanHeader(byte numberOfComponents, JpegScanComponentSpecificationParameters[]? components, byte startOfSpectralSelection, byte endOfSpectralSelection, byte successiveApproximationBitPositionHigh, byte successiveApproximationBitPositionLow)
         {
             NumberOfComponents = numberOfComponents;
@@ -17,13 +29,39 @@ namespace JpegLibrary
             SuccessiveApproximationBitPositionLow = successiveApproximationBitPositionLow;
         }
 
+        /// <summary>
+        /// Parameters for each component.
+        /// </summary>
         public JpegScanComponentSpecificationParameters[]? Components { get; }
+
+        /// <summary>
+        /// The number of component in this scan.
+        /// </summary>
         public byte NumberOfComponents { get; }
+
+        /// <summary>
+        /// Start of spectral selection.
+        /// </summary>
         public byte StartOfSpectralSelection { get; }
+
+        /// <summary>
+        /// End of spectral selection.
+        /// </summary>
         public byte EndOfSpectralSelection { get; }
+
+        /// <summary>
+        /// Successive approximation bit position (high).
+        /// </summary>
         public byte SuccessiveApproximationBitPositionHigh { get; }
+
+        /// <summary>
+        /// Successive approximation bit position (low).
+        /// </summary>
         public byte SuccessiveApproximationBitPositionLow { get; }
 
+        /// <summary>
+        /// Gets the count of bytes required to encode this scan header.
+        /// </summary>
         public byte BytesRequired => (byte)(4 + 2 * NumberOfComponents);
 
         internal bool ShadowEquals(JpegScanHeader other)
@@ -32,6 +70,14 @@ namespace JpegLibrary
                 SuccessiveApproximationBitPositionHigh == other.SuccessiveApproximationBitPositionHigh && SuccessiveApproximationBitPositionLow == other.SuccessiveApproximationBitPositionLow;
         }
 
+        /// <summary>
+        /// Parse the scan header from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="metadataOnly">True if the construction of the <see cref="JpegScanComponentSpecificationParameters"/> array should be suppressed.</param>
+        /// <param name="scanHeader">The scan header parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan header is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, bool metadataOnly, out JpegScanHeader scanHeader, out int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -98,6 +144,14 @@ namespace JpegLibrary
 
         }
 
+        /// <summary>
+        /// Parse the scan header from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="metadataOnly">True if the construction of the <see cref="JpegScanComponentSpecificationParameters"/> array should be suppressed.</param>
+        /// <param name="scanHeader">The scan header parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the scan header is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, bool metadataOnly, out JpegScanHeader scanHeader, out int bytesConsumed)
         {
             bytesConsumed = 0;
@@ -147,6 +201,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write the scan header into the buffer specified.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        /// <param name="bytesWritten">The count of bytes written.</param>
+        /// <returns>True if the destination buffer is large enough.</returns>
         public bool TryWrite(Span<byte> buffer, out int bytesWritten)
         {
             if (buffer.IsEmpty)
@@ -189,8 +249,17 @@ namespace JpegLibrary
         }
     }
 
+    /// <summary>
+    /// Parameters for each component in the scan.
+    /// </summary>
     public readonly struct JpegScanComponentSpecificationParameters
     {
+        /// <summary>
+        /// Initialize the instance.
+        /// </summary>
+        /// <param name="scanComponentSelector">The component selector.</param>
+        /// <param name="dcEntropyCodingTableSelector">The DC entropy coding table selector.</param>
+        /// <param name="acEntropyCodingTableSelector">The AC entropy coding table selector.</param>
         public JpegScanComponentSpecificationParameters(byte scanComponentSelector, byte dcEntropyCodingTableSelector, byte acEntropyCodingTableSelector)
         {
             ScanComponentSelector = scanComponentSelector;
@@ -198,10 +267,27 @@ namespace JpegLibrary
             AcEntropyCodingTableSelector = acEntropyCodingTableSelector;
         }
 
+        /// <summary>
+        /// The component selector.
+        /// </summary>
         public byte ScanComponentSelector { get; }
+
+        /// <summary>
+        /// The DC entropy coding table selector.
+        /// </summary>
         public byte DcEntropyCodingTableSelector { get; }
+
+        /// <summary>
+        /// The AC entropy coding table selector.
+        /// </summary>
         public byte AcEntropyCodingTableSelector { get; }
 
+        /// <summary>
+        /// Parse the scan component from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="component">The scan component parsed.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, out JpegScanComponentSpecificationParameters component)
         {
             if (buffer.IsSingleSegment)
@@ -229,6 +315,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Parse the scan component from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="component">The scan component parsed.</param>
+        /// <returns>True is the scan component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, out JpegScanComponentSpecificationParameters component)
         {
             if (buffer.Length < 2)
@@ -244,6 +336,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write the scan component into the buffer specified.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        /// <param name="bytesWritten">The count of bytes written.</param>
+        /// <returns>True if the destination buffer is large enough.</returns>
         public bool TryWrite(Span<byte> buffer, out int bytesWritten)
         {
             if (buffer.Length < 2)

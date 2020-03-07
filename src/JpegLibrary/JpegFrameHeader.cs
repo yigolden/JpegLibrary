@@ -5,8 +5,19 @@ using System.Buffers;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// The frame header defined by StartOfFrame marker.
+    /// </summary>
     public readonly struct JpegFrameHeader
     {
+        /// <summary>
+        /// Initialize the frame header.
+        /// </summary>
+        /// <param name="samplePrecision">The sample precision.</param>
+        /// <param name="numberOfLines">Number of lines.</param>
+        /// <param name="samplesPerLine">Samples per line.</param>
+        /// <param name="numberOfComponents">Number of components.</param>
+        /// <param name="components">Parameters for each component.</param>
         public JpegFrameHeader(byte samplePrecision, ushort numberOfLines, ushort samplesPerLine, byte numberOfComponents, JpegFrameComponentSpecificationParameters[]? components)
         {
             SamplePrecision = samplePrecision;
@@ -16,14 +27,44 @@ namespace JpegLibrary
             Components = components;
         }
 
+        /// <summary>
+        /// Parameters for each component.
+        /// </summary>
         public JpegFrameComponentSpecificationParameters[]? Components { get; }
+
+        /// <summary>
+        /// The sample precision.
+        /// </summary>
         public byte SamplePrecision { get; }
+
+        /// <summary>
+        /// Number of lines.
+        /// </summary>
         public ushort NumberOfLines { get; }
+
+        /// <summary>
+        /// Samples per line.
+        /// </summary>
         public ushort SamplesPerLine { get; }
+
+        /// <summary>
+        /// Number of components.
+        /// </summary>
         public byte NumberOfComponents { get; }
 
+        /// <summary>
+        /// Gets the count of bytes required to encode this frame header.
+        /// </summary>
         public byte BytesRequired => (byte)(6 + 3 * NumberOfComponents);
 
+        /// <summary>
+        /// Parse the frame header from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="metadataOnly">True if the construction of the <see cref="JpegFrameComponentSpecificationParameters"/> array should be suppressed.</param>
+        /// <param name="frameHeader">The frame header parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the frame header is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, bool metadataOnly, out JpegFrameHeader frameHeader, out int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -83,6 +124,14 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Parse the frame header from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="metadataOnly">True if the construction of the <see cref="JpegFrameComponentSpecificationParameters"/> array should be suppressed.</param>
+        /// <param name="frameHeader">The frame header parsed.</param>
+        /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
+        /// <returns>True is the frame header is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, bool metadataOnly, out JpegFrameHeader frameHeader, out int bytesConsumed)
         {
             bytesConsumed = 0;
@@ -130,6 +179,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write the frame header into the buffer specified.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        /// <param name="bytesWritten">The count of bytes written.</param>
+        /// <returns>True if the destination buffer is large enough.</returns>
         public bool TryWrite(Span<byte> buffer, out int bytesWritten)
         {
             if (buffer.Length < 6)
@@ -171,8 +226,18 @@ namespace JpegLibrary
         }
     }
 
+    /// <summary>
+    /// Parameters for each component in the frame.
+    /// </summary>
     public readonly struct JpegFrameComponentSpecificationParameters
     {
+        /// <summary>
+        /// Initialize the instance.
+        /// </summary>
+        /// <param name="identifier">The identifier of this component.</param>
+        /// <param name="horizontalSamplingFactor">The horizontal sampling factor.</param>
+        /// <param name="verticalSamplingFactor">The vertical sampling factor.</param>
+        /// <param name="quantizationTableSelector">The quantization table selector.</param>
         public JpegFrameComponentSpecificationParameters(byte identifier, byte horizontalSamplingFactor, byte verticalSamplingFactor, byte quantizationTableSelector)
         {
             Identifier = identifier;
@@ -181,11 +246,32 @@ namespace JpegLibrary
             QuantizationTableSelector = quantizationTableSelector;
         }
 
+        /// <summary>
+        /// The identifier of this component.
+        /// </summary>
         public byte Identifier { get; }
+
+        /// <summary>
+        /// The horizontal sampling factor.
+        /// </summary>
         public byte HorizontalSamplingFactor { get; }
+
+        /// <summary>
+        /// The vertical sampling factor.
+        /// </summary>
         public byte VerticalSamplingFactor { get; }
+
+        /// <summary>
+        /// The quantization table selector.
+        /// </summary>
         public byte QuantizationTableSelector { get; }
 
+        /// <summary>
+        /// Parse the frame component from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="component">The frame component parsed.</param>
+        /// <returns>True is the frame component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySequence<byte> buffer, out JpegFrameComponentSpecificationParameters component)
         {
             if (buffer.IsSingleSegment)
@@ -214,6 +300,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Parse the frame component from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="component">The frame component parsed.</param>
+        /// <returns>True is the frame component is successfully parsed.</returns>
         public static bool TryParse(ReadOnlySpan<byte> buffer, out JpegFrameComponentSpecificationParameters component)
         {
             if (buffer.Length < 3)
@@ -230,6 +322,12 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write the frame component into the buffer specified.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        /// <param name="bytesWritten">The count of bytes written.</param>
+        /// <returns>True if the destination buffer is large enough.</returns>
         public bool TryWrite(Span<byte> buffer, out int bytesWritten)
         {
             if (buffer.Length < 3)

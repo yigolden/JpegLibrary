@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// A mutable struct for writing content into a buffer writer.
+    /// </summary>
     public ref struct JpegWriter
     {
         private readonly IBufferWriter<byte> _writer;
@@ -18,6 +21,11 @@ namespace JpegLibrary
         private bool _bitMode;
         private byte _bitsInRegister;
 
+        /// <summary>
+        /// Initialize the writer with the specified buffer writer.
+        /// </summary>
+        /// <param name="writer">The buffer writer to write to.</param>
+        /// <param name="minimumBufferSize">The minimum buffer size to rent per <see cref="IBufferWriter{T}.GetSpan(int)"/> call.</param>
         public JpegWriter(IBufferWriter<byte> writer, int minimumBufferSize)
         {
             _writer = writer;
@@ -59,6 +67,9 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Flush the temporary buffer into the underlying buffer writer.
+        /// </summary>
         public void Flush()
         {
             if (_writer is null)
@@ -116,11 +127,17 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Enter bit mode for this writer.
+        /// </summary>
         public void EnterBitMode()
         {
             _bitMode = true;
         }
 
+        /// <summary>
+        /// Enter bit mode for this writer.
+        /// </summary>
         public void ExitBitMode()
         {
             if (_bitMode)
@@ -140,6 +157,11 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Gets a temporary buffer for writing arbitrary content.
+        /// </summary>
+        /// <param name="length">The minimum size of the buffer.</param>
+        /// <returns>The temporary buffer.</returns>
         public Span<byte> GetSpan(int length)
         {
             if (length < 0)
@@ -154,6 +176,10 @@ namespace JpegLibrary
             return _buffer.Slice(0, length);
         }
 
+        /// <summary>
+        /// Advance the temporary buffer and flush the content into the underlying buffer writer.
+        /// </summary>
+        /// <param name="length">The byte count to advance by.</param>
         public void Advance(int length)
         {
             if ((uint)length > (uint)_buffer.Length)
@@ -164,7 +190,11 @@ namespace JpegLibrary
             _bufferConsunmed += length;
         }
 
-        // bits: right justified bits
+        /// <summary>
+        /// Write bits into the JPEG stream.
+        /// </summary>
+        /// <param name="bits">Right justified bits.</param>
+        /// <param name="bitLength">The count of bits to write.</param>
         public void WriteBits(uint bits, int bitLength)
         {
             if ((uint)bitLength > 32u)
@@ -187,6 +217,10 @@ namespace JpegLibrary
             _bitsInRegister += (byte)bitLength;
         }
 
+        /// <summary>
+        /// The bytes into the JPEG stream.
+        /// </summary>
+        /// <param name="bytes">The bytes to write.</param>
         public void WriteBytes(ReadOnlySequence<byte> bytes)
         {
             if (_bitMode)
@@ -217,6 +251,10 @@ namespace JpegLibrary
 
         }
 
+        /// <summary>
+        /// The bytes into the JPEG stream.
+        /// </summary>
+        /// <param name="bytes">The bytes to write.</param>
         public void WriteBytes(ReadOnlySpan<byte> bytes)
         {
             if (_bitMode)
@@ -235,8 +273,17 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Write JPEG marker into the JPEG stream.
+        /// </summary>
+        /// <param name="marker">The JPEG marker to writer.</param>
         public void WriteMarker(JpegMarker marker)
         {
+            if (_bitMode)
+            {
+                throw new InvalidOperationException("When bit mode is enabled, you are not allowed to write bytes to the stream.");
+            }
+
             EnsureBuffer(2);
 
             Span<byte> buffer = _buffer;
@@ -246,8 +293,17 @@ namespace JpegLibrary
             _bufferConsunmed += 2;
         }
 
+        /// <summary>
+        /// Write a length field into the JPEG stream.
+        /// </summary>
+        /// <param name="length">The length to write.</param>
         public void WriteLength(ushort length)
         {
+            if (_bitMode)
+            {
+                throw new InvalidOperationException("When bit mode is enabled, you are not allowed to write bytes to the stream.");
+            }
+
             EnsureBuffer(2);
 
             BinaryPrimitives.WriteUInt16BigEndian(_buffer, (ushort)(length + 2));

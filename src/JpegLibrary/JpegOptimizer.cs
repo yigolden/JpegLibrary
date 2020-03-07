@@ -61,7 +61,7 @@ namespace JpegLibrary
                 // Read next marker
                 if (!reader.TryReadMarker(out JpegMarker marker))
                 {
-                    ThrowInvalidDataException(reader.ConsumedBytes, "No marker found.");
+                    ThrowInvalidDataException(reader.ConsumedByteCount, "No marker found.");
                     return;
                 }
 
@@ -88,7 +88,7 @@ namespace JpegLibrary
                     case JpegMarker.StartOfFrame13:
                     case JpegMarker.StartOfFrame14:
                     case JpegMarker.StartOfFrame15:
-                        ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
+                        ThrowInvalidDataException(reader.ConsumedByteCount, $"This type of JPEG stream is not supported ({marker}).");
                         return;
                     case JpegMarker.DefineHuffmanTable:
                         ProcessDefineHuffmanTable(ref reader);
@@ -124,7 +124,7 @@ namespace JpegLibrary
 
             if (!scanRead)
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "No image data is read.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "No image data is read.");
                 return;
             }
         }
@@ -134,22 +134,22 @@ namespace JpegLibrary
             // Read length field
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
                 return;
             }
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
                 return;
             }
             if (!JpegFrameHeader.TryParse(buffer, metadataOnly, out JpegFrameHeader frameHeader, out int bytesConsumed))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes - length + bytesConsumed, "Failed to parse frame header.");
+                ThrowInvalidDataException(reader.ConsumedByteCount - length + bytesConsumed, "Failed to parse frame header.");
                 return;
             }
             if (!overrideAllowed && _frameHeader.HasValue)
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Multiple frame is not supported.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Multiple frame is not supported.");
                 return;
             }
             _frameHeader = frameHeader;
@@ -159,12 +159,12 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
                 return;
             }
             if (!reader.TryAdvance(length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data reached.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data reached.");
                 return;
             }
         }
@@ -174,15 +174,15 @@ namespace JpegLibrary
 
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
             }
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
             }
             if (!JpegScanHeader.TryParse(buffer, metadataOnly, out JpegScanHeader scanHeader, out int bytesConsumed))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes - length + bytesConsumed, "Failed to parse scan header.");
+                ThrowInvalidDataException(reader.ConsumedByteCount - length + bytesConsumed, "Failed to parse scan header.");
             }
             return scanHeader;
         }
@@ -191,12 +191,12 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
                 return;
             }
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer) || buffer.Length < 2)
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
                 return;
             }
             Span<byte> local = stackalloc byte[2];
@@ -209,15 +209,15 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
                 return;
             }
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
                 return;
             }
-            ProcessDefineHuffmanTable(buffer, reader.ConsumedBytes - length);
+            ProcessDefineHuffmanTable(buffer, reader.ConsumedByteCount - length);
         }
 
         private void ProcessDefineHuffmanTable(ReadOnlySequence<byte> segment, int currentOffset)
@@ -240,15 +240,15 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
                 return;
             }
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
                 return;
             }
-            ProcessDefineQuantizationTable(buffer, reader.ConsumedBytes - length);
+            ProcessDefineQuantizationTable(buffer, reader.ConsumedByteCount - length);
         }
 
         private void ProcessDefineQuantizationTable(ReadOnlySequence<byte> segment, int currentOffset)
@@ -532,7 +532,7 @@ namespace JpegLibrary
             {
                 if (!reader.TryReadMarker(out JpegMarker marker))
                 {
-                    ThrowInvalidDataException(reader.ConsumedBytes, "No marker found.");
+                    ThrowInvalidDataException(reader.ConsumedByteCount, "No marker found.");
                     return;
                 }
 
@@ -560,7 +560,7 @@ namespace JpegLibrary
                     case JpegMarker.StartOfFrame13:
                     case JpegMarker.StartOfFrame14:
                     case JpegMarker.StartOfFrame15:
-                        ThrowInvalidDataException(reader.ConsumedBytes, $"This type of JPEG stream is not supported ({marker}).");
+                        ThrowInvalidDataException(reader.ConsumedByteCount, $"This type of JPEG stream is not supported ({marker}).");
                         return;
                     case JpegMarker.DefineHuffmanTable:
                         if (!huffmanTableWritten)
@@ -581,7 +581,7 @@ namespace JpegLibrary
                         ReadOnlySequence<byte> buffer = CopyMarkerData(ref reader, ref writer);
                         if (!JpegScanHeader.TryParse(buffer, false, out JpegScanHeader scanHeader, out _))
                         {
-                            ThrowInvalidDataException(reader.ConsumedBytes - (int)buffer.Length, "Failed to parse scan header.");
+                            ThrowInvalidDataException(reader.ConsumedByteCount - (int)buffer.Length, "Failed to parse scan header.");
                         }
                         CopyScanBaseline(ref reader, ref writer, scanHeader);
                         break;
@@ -620,11 +620,11 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
             }
             if (!reader.TryAdvance(length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
             }
         }
 
@@ -632,12 +632,12 @@ namespace JpegLibrary
         {
             if (!reader.TryReadLength(out ushort length))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment length.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment length.");
             }
 
             if (!reader.TryReadBytes(length, out ReadOnlySequence<byte> buffer))
             {
-                ThrowInvalidDataException(reader.ConsumedBytes, "Unexpected end of input data when reading segment content.");
+                ThrowInvalidDataException(reader.ConsumedByteCount, "Unexpected end of input data when reading segment content.");
             }
             writer.WriteLength(length);
             writer.WriteBytes(buffer);
