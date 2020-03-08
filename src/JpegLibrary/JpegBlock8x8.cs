@@ -65,7 +65,6 @@ namespace JpegLibrary
         /// <summary>
         /// Gets or sets the element at the specified position.
         /// </summary>
-        /// <param name="index">The index of the element.</param>
         /// <param name="x">The row index of the block.</param>
         /// <param name="y">The column index of the block.</param>
         /// <returns>The element value.</returns>

@@ -9,6 +9,9 @@ using System.IO;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// A optimizer to optimize baseline JPEG file to reduce file size.
+    /// </summary>
     public class JpegOptimizer
     {
         private readonly int _minimumBufferSegmentSize;
@@ -24,24 +27,42 @@ namespace JpegLibrary
 
         private IBufferWriter<byte>? _output;
 
+        /// <summary>
+        /// Initialize the optimizer.
+        /// </summary>
         public JpegOptimizer() : this(4096) { }
 
+        /// <summary>
+        /// Initialize the decoder.
+        /// </summary>
+        /// <param name="minimumBufferSegmentSize">The minimum size of buffer to rent from the output writer.</param>
         public JpegOptimizer(int minimumBufferSegmentSize)
         {
             _minimumBufferSegmentSize = minimumBufferSegmentSize;
         }
 
-        public void SetInput(ReadOnlyMemory<byte> inputBuffer)
-            => SetInput(new ReadOnlySequence<byte>(inputBuffer));
+        /// <summary>
+        /// Set JPEG stream content to optimize.
+        /// </summary>
+        /// <param name="input">The JPEG stream.</param>
+        public void SetInput(ReadOnlyMemory<byte> input)
+            => SetInput(new ReadOnlySequence<byte>(input));
 
-        public void SetInput(ReadOnlySequence<byte> inputBuffer)
+        /// <summary>
+        /// Set JPEG stream content to optimize.
+        /// </summary>
+        /// <param name="input">The JPEG stream.</param>
+        public void SetInput(ReadOnlySequence<byte> input)
         {
-            _inputBuffer = inputBuffer;
+            _inputBuffer = input;
 
             _frameHeader = null;
             _restartInterval = 0;
         }
 
+        /// <summary>
+        /// Scan the JPEG stream to build optimal Huffman tables.
+        /// </summary>
         public void Scan()
         {
             if (_inputBuffer.IsEmpty)
@@ -75,9 +96,6 @@ namespace JpegLibrary
                     case JpegMarker.StartOfFrame1:
                         ProcessFrameHeader(ref reader, false, false);
                         break;
-                    case JpegMarker.StartOfFrame2:
-                        ProcessFrameHeader(ref reader, false, false);
-                        throw new InvalidDataException("Progressive JPEG is not supported currently.");
                     case JpegMarker.StartOfFrame3:
                     case JpegMarker.StartOfFrame5:
                     case JpegMarker.StartOfFrame6:
@@ -481,8 +499,6 @@ namespace JpegLibrary
             }
         }
 
-
-
         private static int DecodeHuffmanCode(ref JpegBitReader reader, JpegHuffmanDecodingTable table)
         {
             int bits = reader.PeekBits(16, out int bitsRead);
@@ -491,7 +507,6 @@ namespace JpegLibrary
             _ = reader.TryAdvanceBits(bitsRead, out _);
             return entry.SymbolValue;
         }
-
 
         private static int Receive(ref JpegBitReader reader, int length)
         {
@@ -508,11 +523,19 @@ namespace JpegLibrary
             return value;
         }
 
+        /// <summary>
+        /// Set the output writer that new JPEG stream will be written to.
+        /// </summary>
+        /// <param name="output">The output writer.</param>
         public void SetOutput(IBufferWriter<byte> output)
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
         }
 
+        /// <summary>
+        /// Optimize JPEG stream.
+        /// </summary>
+        /// <param name="strip">True to strip all the metadata from the JPEG stream.</param>
         public void Optimize(bool strip = true)
         {
             if (_encodingTables.IsEmpty)

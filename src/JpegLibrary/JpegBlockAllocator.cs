@@ -8,19 +8,30 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// The allocator for <see cref="JpegBlock8x8"/>.
+    /// </summary>
     public sealed class JpegBlockAllocator : IDisposable
     {
         private readonly MemoryPool<byte> _memoryPool;
         private IMemoryOwner<byte>? _bufferHandle;
         private ComponentAllocation[]? _components;
 
-        internal JpegBlockAllocator(MemoryPool<byte>? memoryPool = null)
+        /// <summary>
+        /// Initialize the allocator/>.
+        /// </summary>
+        /// <param name="memoryPool">The memory pool to use.</param>
+        public JpegBlockAllocator(MemoryPool<byte>? memoryPool = null)
         {
             _memoryPool = memoryPool ?? MemoryPool<byte>.Shared;
             _bufferHandle = null;
             _components = null;
         }
 
+        /// <summary>
+        /// Allocate blocks for the specified frame.
+        /// </summary>
+        /// <param name="frameHeader">The information of the frame.</param>
         public void Allocate(JpegFrameHeader frameHeader)
         {
             if (!(_bufferHandle is null))
@@ -72,6 +83,13 @@ namespace JpegLibrary
             bufferHandle.Memory.Span.Slice(0, length).Clear();
         }
 
+        /// <summary>
+        /// The the reference to the specified spatial block.
+        /// </summary>
+        /// <param name="componentIndex">The index of the component.</param>
+        /// <param name="blockX">The offset of blocks in the horizontal orientation.</param>
+        /// <param name="blockY">The offset of blocks in the vertical orientation.</param>
+        /// <returns>The reference to the block.</returns>
         public ref JpegBlock8x8 GetBlockReference(int componentIndex, int blockX, int blockY)
         {
             ComponentAllocation[]? components = _components;
@@ -95,6 +113,10 @@ namespace JpegLibrary
             return ref Unsafe.Add(ref blockRef, component.ComponentBlockOffset + blockY * component.HorizontalComponentBlock + blockX);
         }
 
+        /// <summary>
+        /// Flush the blocks into the specified <see cref="JpegBlockOutputWriter"/>.
+        /// </summary>
+        /// <param name="outputWriter">The output writer.</param>
         public void Flush(JpegBlockOutputWriter outputWriter)
         {
             if (outputWriter is null)
@@ -167,6 +189,9 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Release all the resources allocated by the allocator.
+        /// </summary>
         public void Dispose()
         {
             if (!(_bufferHandle is null))

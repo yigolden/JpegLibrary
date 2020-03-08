@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// The encoder to encode image into JPEG stream.
+    /// </summary>
     public class JpegEncoder
     {
         private int _minimumBufferSegmentSize;
@@ -20,15 +23,30 @@ namespace JpegLibrary
         private JpegHuffmanEncodingTableCollection _huffmanTables;
         private List<JpegHuffmanEncodingComponent>? _encodeComponents;
 
+        /// <summary>
+        /// Initialize the encoder.
+        /// </summary>
         public JpegEncoder() : this(4096) { }
 
+        /// <summary>
+        /// Initialize the encoder.
+        /// </summary>
+        /// <param name="minimumBufferSegmentSize">The minimum size of buffer to rent from the output writer.</param>
         public JpegEncoder(int minimumBufferSegmentSize)
         {
             _minimumBufferSegmentSize = minimumBufferSegmentSize;
         }
 
+        /// <summary>
+        /// Get the minimum size of buffer to rent from the output writer.
+        /// </summary>
         protected int MinimumBufferSegmentSize => _minimumBufferSegmentSize;
 
+        /// <summary>
+        /// Clone the current parameters of the encoder.
+        /// </summary>
+        /// <typeparam name="T">The cloned encoder type.</typeparam>
+        /// <returns>The cloned encoder.</returns>
         protected T CloneParameters<T>() where T : JpegEncoder, new()
         {
             bool optimizeCoding = _huffmanTables.ContainsTableBuilder();
@@ -49,25 +67,40 @@ namespace JpegLibrary
             return cloned;
         }
 
+        /// <summary>
+        /// Get or set the memory pool to use when allocating large chunks of temporary buffer.
+        /// </summary>
         public MemoryPool<byte>? MemoryPool { get; set; }
 
-        public void SetInputReader(JpegBlockInputReader input)
+        /// <summary>
+        /// Set the input buffer writer.
+        /// </summary>
+        /// <param name="inputReader">The output buffer reader.</param>
+        public void SetInputReader(JpegBlockInputReader inputReader)
         {
-            _input = input ?? throw new ArgumentNullException(nameof(input));
+            _input = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
         }
 
+        /// <summary>
+        /// Set the output writer that JPEG stream will be written to.
+        /// </summary>
+        /// <param name="output">The output writer.</param>
         public void SetOutput(IBufferWriter<byte> output)
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
         }
 
-        public void SetQuantizationTable(JpegQuantizationTable quantizationTable)
+        /// <summary>
+        /// Set the quantization table.
+        /// </summary>
+        /// <param name="table">The quantization table.</param>
+        public void SetQuantizationTable(JpegQuantizationTable table)
         {
-            if (quantizationTable.IsEmpty)
+            if (table.IsEmpty)
             {
-                throw new ArgumentException("Quantization table is not initialized.", nameof(quantizationTable));
+                throw new ArgumentException("Quantization table is not initialized.", nameof(table));
             }
-            if (quantizationTable.ElementPrecision != 0)
+            if (table.ElementPrecision != 0)
             {
                 throw new InvalidOperationException("Only baseline JPEG is supported.");
             }
@@ -80,21 +113,32 @@ namespace JpegLibrary
 
             for (int i = 0; i < tables.Count; i++)
             {
-                if (tables[i].Identifier == quantizationTable.Identifier)
+                if (tables[i].Identifier == table.Identifier)
                 {
-                    tables[i] = quantizationTable;
+                    tables[i] = table;
                     return;
                 }
             }
 
-            tables.Add(quantizationTable);
+            tables.Add(table);
         }
 
+        /// <summary>
+        /// Set the Huffman table.
+        /// </summary>
+        /// <param name="isDcTable">Whether the table is DC table.</param>
+        /// <param name="identifier">The identifier of the Huffman table.</param>
+        /// <param name="table">The Huffman table.</param>
         public void SetHuffmanTable(bool isDcTable, byte identifier, JpegHuffmanEncodingTable? table)
         {
             _huffmanTables.AddTable(isDcTable ? (byte)0 : (byte)1, identifier, table);
         }
 
+        /// <summary>
+        /// Set the Huffman table that should be automatically generated.
+        /// </summary>
+        /// <param name="isDcTable">Whether the table is DC table.</param>
+        /// <param name="identifier">The identifier of the Huffman table.</param>
         public void SetHuffmanTable(bool isDcTable, byte identifier)
             => SetHuffmanTable(isDcTable, identifier, null);
 
@@ -114,6 +158,14 @@ namespace JpegLibrary
             return default;
         }
 
+        /// <summary>
+        /// Add a component to encode.
+        /// </summary>
+        /// <param name="quantizationTableIdentifier">The identifier of the quantization table.</param>
+        /// <param name="huffmanDcTableIdentifier">The identifier of the DC Huffman table.</param>
+        /// <param name="huffmanAcTableIdentifier">The identifier of the AC Huffman table.</param>
+        /// <param name="horizontalSubsampling">The horizontal subsampling factor.</param>
+        /// <param name="verticalSubsampling">The horizontal subsampling factor.</param>
         public void AddComponent(byte quantizationTableIdentifier, byte huffmanDcTableIdentifier, byte huffmanAcTableIdentifier, byte horizontalSubsampling, byte verticalSubsampling)
         {
             if (horizontalSubsampling != 1 && horizontalSubsampling != 2 && horizontalSubsampling != 4)
@@ -173,12 +225,19 @@ namespace JpegLibrary
             components.Add(component);
         }
 
+        /// <summary>
+        /// Create a JPEG writer.
+        /// </summary>
+        /// <returns>The JPEG writer.</returns>
         protected JpegWriter CreateJpegWriter()
         {
             IBufferWriter<byte> output = _output ?? throw new InvalidOperationException("Output is not specified.");
             return new JpegWriter(output, _minimumBufferSegmentSize);
         }
 
+        /// <summary>
+        /// Encode the image.
+        /// </summary>
         public virtual void Encode()
         {
             bool optimizeCoding = _huffmanTables.ContainsTableBuilder();
@@ -216,11 +275,19 @@ namespace JpegLibrary
             writer.Flush();
         }
 
+        /// <summary>
+        /// Write the StartOfImage marker.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected static void WriteStartOfImage(ref JpegWriter writer)
         {
             writer.WriteMarker(JpegMarker.StartOfImage);
         }
 
+        /// <summary>
+        /// Write quantization tables.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected void WriteQuantizationTables(ref JpegWriter writer)
         {
             List<JpegQuantizationTable>? quantizationTables = _quantizationTables;
@@ -248,6 +315,10 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Write Huffman tables.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected void WriteHuffmanTables(ref JpegWriter writer)
         {
             if (_huffmanTables.IsEmpty)
@@ -261,6 +332,10 @@ namespace JpegLibrary
             _huffmanTables.Write(ref writer);
         }
 
+        /// <summary>
+        /// Write the StartOfFrame header.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected JpegFrameHeader WriteStartOfFrame(ref JpegWriter writer)
         {
             JpegBlockInputReader? input = _input;
@@ -291,6 +366,10 @@ namespace JpegLibrary
             return frameHeader;
         }
 
+        /// <summary>
+        /// Write the StartOfScan header.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected void WriteStartOfScan(ref JpegWriter writer)
         {
             List<JpegHuffmanEncodingComponent>? encodeComponents = _encodeComponents;
@@ -314,6 +393,10 @@ namespace JpegLibrary
             writer.Advance(bytesCount);
         }
 
+        /// <summary>
+        /// Encode each block and save the coefficients.
+        /// </summary>
+        /// <param name="allocator">The coefficient allocator.</param>
         protected void TransformBlocks(JpegBlockAllocator allocator)
         {
             JpegBlockInputReader inputReader = _input ?? throw new InvalidOperationException("Input is not specified.");
@@ -385,6 +468,12 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Build Huffman table from the coefficients.
+        /// </summary>
+        /// <param name="frameHeader">The JPEG frame header.</param>
+        /// <param name="allocator">The coefficient allocator.</param>
+        /// <param name="optimal">Whether to use the optimal algorithm.</param>
         protected void BuildHuffmanTables(JpegFrameHeader frameHeader, JpegBlockAllocator allocator, bool optimal = false)
         {
             List<JpegHuffmanEncodingComponent>? components = _encodeComponents;
@@ -493,6 +582,12 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Write the prepared scan data.
+        /// </summary>
+        /// <param name="frameHeader">The JPEG frame header.</param>
+        /// <param name="allocator">The coefficient allocator.</param>
+        /// <param name="writer">The JPEG writer.</param>
         protected void WritePreparedScanData(JpegFrameHeader frameHeader, JpegBlockAllocator allocator, ref JpegWriter writer)
         {
             List<JpegHuffmanEncodingComponent>? components = _encodeComponents;
@@ -546,6 +641,10 @@ namespace JpegLibrary
             writer.ExitBitMode();
         }
 
+        /// <summary>
+        /// Encode the image and write scan data.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected void WriteScanData(ref JpegWriter writer)
         {
             JpegBlockInputReader inputReader = _input ?? throw new InvalidOperationException("Input is not specified.");
@@ -812,6 +911,10 @@ namespace JpegLibrary
             writer.WriteBits(code, codeLength);
         }
 
+        /// <summary>
+        /// Write the EndOfImage marker.
+        /// </summary>
+        /// <param name="writer">The JPEG writer.</param>
         protected static void WriteEndOfImage(ref JpegWriter writer)
         {
             writer.WriteMarker(JpegMarker.EndOfImage);
@@ -837,27 +940,42 @@ namespace JpegLibrary
             8, 8, 8,
         };
 
+        /// <summary>
+        /// Reset the input reader.
+        /// </summary>
         public void ResetInputReader()
         {
             _input = null;
         }
 
+        /// <summary>
+        /// Reset JPEG tables.
+        /// </summary>
         public void ResetTables()
         {
             _quantizationTables = default;
             _huffmanTables = default;
         }
 
+        /// <summary>
+        /// Reset the components.
+        /// </summary>
         public void ResetComponents()
         {
             _encodeComponents = default;
         }
 
+        /// <summary>
+        /// Reset the output.
+        /// </summary>
         public void ResetOutput()
         {
             _output = null;
         }
 
+        /// <summary>
+        /// Reset the encoder to the initial state.
+        /// </summary>
         public void Reset()
         {
             ResetInputReader();

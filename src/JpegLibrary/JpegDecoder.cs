@@ -13,6 +13,9 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
+    /// <summary>
+    /// The decoder to decode image from JPEG stream.
+    /// </summary>
     public class JpegDecoder
     {
         private ReadOnlySequence<byte> _inputBuffer;
@@ -29,22 +32,46 @@ namespace JpegLibrary
         private List<JpegHuffmanDecodingTable>? _huffmanTables;
         private List<JpegArithmeticDecodingTable>? _arithmeticTables;
 
+        /// <summary>
+        /// Get or set the memory pool to use when allocating large chunks of temporary buffer.
+        /// </summary>
         public MemoryPool<byte>? MemoryPool { get; set; }
 
-        public void SetInput(ReadOnlyMemory<byte> inputBuffer)
-            => SetInput(new ReadOnlySequence<byte>(inputBuffer));
+        /// <summary>
+        /// Get the StartOfFrame marker of this image.
+        /// </summary>
+        public JpegMarker StartOfFrame { get; protected set; }
 
-        public void SetInput(ReadOnlySequence<byte> inputBuffer)
+        /// <summary>
+        /// Set JPEG stream content to decode.
+        /// </summary>
+        /// <param name="input">The JPEG stream.</param>
+        public void SetInput(ReadOnlyMemory<byte> input)
+            => SetInput(new ReadOnlySequence<byte>(input));
+
+        /// <summary>
+        /// Set JPEG stream content to decode.
+        /// </summary>
+        /// <param name="input">The JPEG stream.</param>
+        public void SetInput(ReadOnlySequence<byte> input)
         {
-            _inputBuffer = inputBuffer;
+            _inputBuffer = input;
 
             _frameHeader = null;
             _restartInterval = 0;
         }
 
-
+        /// <summary>
+        /// Scan the stream for JPEG image information.
+        /// </summary>
+        /// <returns>The length of the JPEG stream.</returns>
         public int Identify() => Identify(false);
 
+        /// <summary>
+        /// Scan the stream for JPEG image information.
+        /// </summary>
+        /// <param name="loadQuantizationTables">True to load quantization tables. This is required if you want to estimate the quality factor of the image.</param>
+        /// <returns>The length of the JPEG stream.</returns>
         public virtual int Identify(bool loadQuantizationTables)
         {
             if (_inputBuffer.IsEmpty)
@@ -77,6 +104,13 @@ namespace JpegLibrary
             return reader.ConsumedByteCount;
         }
 
+        /// <summary>
+        /// This routine is called when <see cref="Identify(bool)"/> meets a marker in the JPEG stream.
+        /// </summary>
+        /// <param name="marker">The JPEG marker.</param>
+        /// <param name="reader">The JPEG reader.</param>
+        /// <param name="loadQuantizationTables">True if quantization tables should be loaded.</param>
+        /// <returns>True if <see cref="Identify(bool)"/> should continue reading.</returns>
         protected virtual bool ProcessMarkerForIdentification(JpegMarker marker, ref JpegReader reader, bool loadQuantizationTables)
         {
             switch (marker)
@@ -89,8 +123,6 @@ namespace JpegLibrary
                 case JpegMarker.StartOfFrame3:
                 case JpegMarker.StartOfFrame9:
                 case JpegMarker.StartOfFrame10:
-                    ProcessFrameHeader(ref reader, false, false);
-                    break;
                 case JpegMarker.StartOfFrame5:
                 case JpegMarker.StartOfFrame6:
                 case JpegMarker.StartOfFrame7:
@@ -98,8 +130,9 @@ namespace JpegLibrary
                 case JpegMarker.StartOfFrame13:
                 case JpegMarker.StartOfFrame14:
                 case JpegMarker.StartOfFrame15:
-                    ThrowInvalidDataException(reader.ConsumedByteCount, $"This type of JPEG stream is not supported ({marker}).");
-                    return false;
+                    StartOfFrame = marker;
+                    ProcessFrameHeader(ref reader, false, false);
+                    break;
                 case JpegMarker.StartOfScan:
                     ProcessScanHeader(ref reader, true);
                     break;
@@ -128,11 +161,17 @@ namespace JpegLibrary
             return true;
         }
 
+        /// <summary>
+        /// Estimate the image quality factor from quantization tables.
+        /// </summary>
+        /// <param name="quality">The estimated quality factor.</param>
+        /// <returns>True if the quality is estimated. False when quantization tables don't exists or loaded.</returns>
         public bool TryEstimateQuanlity(out float quality)
         {
             if (_quantizationTables is null)
             {
-                throw new InvalidOperationException("Quantization tables must be loaded before this operation.");
+                quality = 0;
+                return false;
             }
 
             // Luminance
@@ -267,8 +306,16 @@ namespace JpegLibrary
             return scanHeader;
         }
 
+        /// <summary>
+        /// Load JPEG tables from the specified buffer.
+        /// </summary>
+        /// <param name="content">The byte buffer that contains JPEG table definitions.</param>
         public void LoadTables(Memory<byte> content) => LoadTables(new ReadOnlySequence<byte>(content));
 
+        /// <summary>
+        /// Load JPEG tables from the specified buffer.
+        /// </summary>
+        /// <param name="content">The byte buffer that contains JPEG table definitions.</param>
         public void LoadTables(ReadOnlySequence<byte> content)
         {
             JpegReader reader = new JpegReader(content);
@@ -296,6 +343,9 @@ namespace JpegLibrary
                         break;
                     case JpegMarker.DefineHuffmanTable:
                         ProcessDefineHuffmanTable(ref reader);
+                        break;
+                    case JpegMarker.DefineArithmeticCodingConditioning:
+                        ProcessDefineArithmeticCodingConditioning(ref reader);
                         break;
                     case JpegMarker.DefineQuantizationTable:
                         ProcessDefineQuantizationTable(ref reader, loadQuantizationTables: true);
@@ -327,16 +377,39 @@ namespace JpegLibrary
 
         private JpegFrameHeader GetFrameHeader() => _frameHeader.HasValue ? _frameHeader.GetValueOrDefault() : throw new InvalidOperationException("Call Identify() before this operation.");
 
+        /// <summary>
+        /// Get the image width from the frame header.
+        /// </summary>
         public int Width => GetFrameHeader().SamplesPerLine;
+
+        /// <summary>
+        /// Get the image height from the frame header.
+        /// </summary>
         public int Height => GetFrameHeader().NumberOfLines;
+
+        /// <summary>
+        /// Get the image precision from the frame header.
+        /// </summary>
         public int Precision => GetFrameHeader().SamplePrecision;
+
+        /// <summary>
+        /// Get the number of components from the frame header.
+        /// </summary>
         public int NumberOfComponents => GetFrameHeader().NumberOfComponents;
 
+        /// <summary>
+        /// Set the frame header.
+        /// </summary>
+        /// <param name="frameHeader">The JPEG frame header.</param>
         public void SetFrameHeader(JpegFrameHeader frameHeader)
         {
             _frameHeader = frameHeader;
         }
 
+        /// <summary>
+        /// Get the maximum horizontal sampling factor.
+        /// </summary>
+        /// <returns>The maximum horizontal sampling factor</returns>
         public int GetMaximumHorizontalSampling()
         {
             if (_maxHorizontalSamplingFactor.HasValue)
@@ -357,6 +430,10 @@ namespace JpegLibrary
             return maxHorizontalSampling;
         }
 
+        /// <summary>
+        /// Get the maximum vertical sampling factor.
+        /// </summary>
+        /// <returns>The maximum vertical sampling factor</returns>
         public int GetMaximumVerticalSampling()
         {
             if (_maxVerticalSamplingFactor.HasValue)
@@ -377,6 +454,11 @@ namespace JpegLibrary
             return maxVerticalSampling;
         }
 
+        /// <summary>
+        /// Get the horizontal sample for the specified component.
+        /// </summary>
+        /// <param name="componentIndex">The index of the component.</param>
+        /// <returns>The horizontal sample of the component.</returns>
         public byte GetHorizontalSampling(int componentIndex)
         {
             JpegFrameHeader frameHeader = GetFrameHeader();
@@ -392,6 +474,11 @@ namespace JpegLibrary
             return components[componentIndex].HorizontalSamplingFactor;
         }
 
+        /// <summary>
+        /// Get the vertical sample for the specified component.
+        /// </summary>
+        /// <param name="componentIndex">The index of the component.</param>
+        /// <returns>The vertical sample of the component.</returns>
         public byte GetVerticalSampling(int componentIndex)
         {
             JpegFrameHeader frameHeader = GetFrameHeader();
@@ -407,11 +494,18 @@ namespace JpegLibrary
             return components[componentIndex].VerticalSamplingFactor;
         }
 
+        /// <summary>
+        /// Set the output buffer writer.
+        /// </summary>
+        /// <param name="outputWriter">The output buffer writer.</param>
         public void SetOutputWriter(JpegBlockOutputWriter outputWriter)
         {
             _outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         }
 
+        /// <summary>
+        /// Decode the image from the JPEG stream.
+        /// </summary>
         public void Decode()
         {
             if (_inputBuffer.IsEmpty)
@@ -455,6 +549,12 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// This routine is called when <see cref="Decode"/> meets a marker in the JPEG stream.
+        /// </summary>
+        /// <param name="marker">The JPEG marker.</param>
+        /// <param name="reader">The JPEG reader.</param>
+        /// <returns>True if <see cref="Decode"/> should continue reading.</returns>
         protected virtual bool ProcessMarkerForDecode(JpegMarker marker, ref JpegReader reader)
         {
             switch (marker)
@@ -533,8 +633,16 @@ namespace JpegLibrary
             _restartInterval = BinaryPrimitives.ReadUInt16BigEndian(local);
         }
 
+        /// <summary>
+        /// Get the restart interval.
+        /// </summary>
+        /// <returns>The restart interval</returns>
         public ushort GetRestartInterval() => _restartInterval;
 
+        /// <summary>
+        /// Set the restart interval.
+        /// </summary>
+        /// <param name="restartInterval">The restart interval</param>
         public void SetRestartInterval(int restartInterval)
         {
             if ((uint)restartInterval > ushort.MaxValue)
@@ -638,21 +746,34 @@ namespace JpegLibrary
             }
         }
 
+        /// <summary>
+        /// Clear all the Huffman tables parsed from the JPEG stream.
+        /// </summary>
         public void ClearHuffmanTable()
         {
             _huffmanTables?.Clear();
         }
 
+        /// <summary>
+        /// Clear all the arithmetic tables parsed from the JPEG stream.
+        /// </summary>
         public void ClearArithmeticTable()
         {
             _arithmeticTables?.Clear();
         }
 
+        /// <summary>
+        /// Clear all the quantization tables parsed from the JPEG stream.
+        /// </summary>
         public void ClearQuantizationTable()
         {
             _quantizationTables?.Clear();
         }
 
+        /// <summary>
+        /// Set the Huffman table.
+        /// </summary>
+        /// <param name="table">The Huffman table.</param>
         public void SetHuffmanTable(JpegHuffmanDecodingTable table)
         {
             if (table is null)
@@ -696,6 +817,10 @@ namespace JpegLibrary
             list.Add(table);
         }
 
+        /// <summary>
+        /// Set the quantization table.
+        /// </summary>
+        /// <param name="table">The quantization table.</param>
         public void SetQuantizationTable(JpegQuantizationTable table)
         {
             if (table.IsEmpty)
@@ -719,6 +844,12 @@ namespace JpegLibrary
             list.Add(table);
         }
 
+        /// <summary>
+        /// Get the specified Huffman table.
+        /// </summary>
+        /// <param name="isDcTable">Whether the table is DC table.</param>
+        /// <param name="identifier">The identifier of the Huffman table.</param>
+        /// <returns>The Huffman table.</returns>
         public JpegHuffmanDecodingTable? GetHuffmanTable(bool isDcTable, byte identifier)
         {
             List<JpegHuffmanDecodingTable>? huffmanTables = _huffmanTables;
@@ -755,6 +886,11 @@ namespace JpegLibrary
             return null;
         }
 
+        /// <summary>
+        /// Get the specified quantization table.
+        /// </summary>
+        /// <param name="identifier">The identifier of the quantization table.</param>
+        /// <returns>The quantization table.</returns>
         public JpegQuantizationTable GetQuantizationTable(byte identifier)
         {
             List<JpegQuantizationTable>? quantizationTables = _quantizationTables;
@@ -772,7 +908,9 @@ namespace JpegLibrary
             return default;
         }
 
-
+        /// <summary>
+        /// Reset the decoder to the initial state.
+        /// </summary>
         public void Reset()
         {
             ResetInput();
@@ -781,11 +919,17 @@ namespace JpegLibrary
             ResetOutputWriter();
         }
 
+        /// <summary>
+        /// Reset the input.
+        /// </summary>
         public void ResetInput()
         {
             _inputBuffer = default;
         }
 
+        /// <summary>
+        /// Reset the JPEG headers.
+        /// </summary>
         public void ResetHeader()
         {
             _frameHeader = null;
@@ -794,6 +938,9 @@ namespace JpegLibrary
             _maxVerticalSamplingFactor = null;
         }
 
+        /// <summary>
+        /// Reset JPEG tables.
+        /// </summary>
         public void ResetTables()
         {
             _huffmanTables?.Clear();
@@ -806,6 +953,9 @@ namespace JpegLibrary
             return _outputWriter;
         }
 
+        /// <summary>
+        /// Reset the output writer.
+        /// </summary>
         public void ResetOutputWriter()
         {
             _outputWriter = null;
