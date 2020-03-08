@@ -38,9 +38,9 @@ namespace JpegLibrary
         public MemoryPool<byte>? MemoryPool { get; set; }
 
         /// <summary>
-        /// Get the StartOfFrame marker of this image.
+        /// Get or set the StartOfFrame marker of this image.
         /// </summary>
-        public JpegMarker StartOfFrame { get; protected set; }
+        public JpegMarker StartOfFrame { get; set; }
 
         /// <summary>
         /// Set JPEG stream content to decode.
@@ -614,6 +614,21 @@ namespace JpegLibrary
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Process scan data.
+        /// </summary>
+        /// <param name="reader">The JPEG reader.</param>
+        /// <param name="scanHeader">The scan header.</param>
+        public void ProcessScan(ref JpegReader reader, JpegScanHeader scanHeader)
+        {
+            using var scanDecoder = JpegScanDecoder.Create(StartOfFrame, this, GetFrameHeader());
+            if (scanDecoder is null)
+            {
+                throw new NotSupportedException("This image type is not supported.");
+            }
+            scanDecoder.ProcessScan(ref reader, scanHeader);
         }
 
         private void ProcessDefineRestartInterval(ref JpegReader reader)
