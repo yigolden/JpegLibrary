@@ -61,7 +61,7 @@ namespace JpegLibrary
             {
                 foreach (JpegHuffmanEncodingComponent item in components)
                 {
-                    cloned.AddComponent(item.QuantizationTable.Identifier, item.DcTableIdentifier, item.AcTableIdentifier, item.HorizontalSamplingFactor, item.VerticalSamplingFactor);
+                    cloned.AddComponent((byte)item.ComponentIndex, item.QuantizationTable.Identifier, item.DcTableIdentifier, item.AcTableIdentifier, item.HorizontalSamplingFactor, item.VerticalSamplingFactor);
                 }
             }
             return cloned;
