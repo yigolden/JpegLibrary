@@ -166,7 +166,20 @@ namespace JpegLibrary
         /// <param name="huffmanAcTableIdentifier">The identifier of the AC Huffman table.</param>
         /// <param name="horizontalSubsampling">The horizontal subsampling factor.</param>
         /// <param name="verticalSubsampling">The horizontal subsampling factor.</param>
+        [Obsolete("This overload is obsolete.")]
         public void AddComponent(byte quantizationTableIdentifier, byte huffmanDcTableIdentifier, byte huffmanAcTableIdentifier, byte horizontalSubsampling, byte verticalSubsampling)
+            => AddComponent((byte)(_encodeComponents?.Count ?? 0), quantizationTableIdentifier, huffmanDcTableIdentifier, huffmanAcTableIdentifier, horizontalSubsampling, verticalSubsampling);
+
+        /// <summary>
+        /// Add a component to encode.
+        /// </summary>
+        /// <param name="componentIndex">The index of the componentIndex.</param>
+        /// <param name="quantizationTableIdentifier">The identifier of the quantization table.</param>
+        /// <param name="huffmanDcTableIdentifier">The identifier of the DC Huffman table.</param>
+        /// <param name="huffmanAcTableIdentifier">The identifier of the AC Huffman table.</param>
+        /// <param name="horizontalSubsampling">The horizontal subsampling factor.</param>
+        /// <param name="verticalSubsampling">The horizontal subsampling factor.</param>
+        public void AddComponent(byte componentIndex, byte quantizationTableIdentifier, byte huffmanDcTableIdentifier, byte huffmanAcTableIdentifier, byte horizontalSubsampling, byte verticalSubsampling)
         {
             if (horizontalSubsampling != 1 && horizontalSubsampling != 2 && horizontalSubsampling != 4)
             {
@@ -181,6 +194,13 @@ namespace JpegLibrary
             if (components is null)
             {
                 _encodeComponents = components = new List<JpegHuffmanEncodingComponent>(4);
+            }
+            foreach (JpegHuffmanEncodingComponent item in components)
+            {
+                if (item.ComponentIndex == componentIndex)
+                {
+                    throw new ArgumentException("The component index is already used by another component.", nameof(componentIndex));
+                }
             }
 
             JpegQuantizationTable quantizationTable = GetQuantizationTable(quantizationTableIdentifier);
@@ -211,7 +231,7 @@ namespace JpegLibrary
 
             var component = new JpegHuffmanEncodingComponent
             {
-                ComponentIndex = components.Count,
+                ComponentIndex = componentIndex,
                 HorizontalSamplingFactor = horizontalSubsampling,
                 VerticalSamplingFactor = verticalSubsampling,
                 DcTableIdentifier = huffmanDcTableIdentifier,
