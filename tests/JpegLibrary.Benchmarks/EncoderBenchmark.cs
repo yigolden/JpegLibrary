@@ -84,9 +84,9 @@ namespace JpegLibrary.Benchmarks
             encoder.SetHuffmanTable(false, 0, JpegStandardHuffmanEncodingTable.GetLuminanceACTable());
             encoder.SetHuffmanTable(true, 1, JpegStandardHuffmanEncodingTable.GetChrominanceDCTable());
             encoder.SetHuffmanTable(false, 1, JpegStandardHuffmanEncodingTable.GetChrominanceACTable());
-            encoder.AddComponent(0, 0, 0, 1, 1); // Y component
-            encoder.AddComponent(1, 1, 1, 1, 1); // Cb component
-            encoder.AddComponent(1, 1, 1, 1, 1); // Cr component
+            encoder.AddComponent(1, 0, 0, 0, 1, 1); // Y component
+            encoder.AddComponent(2, 1, 1, 1, 1, 1); // Cb component
+            encoder.AddComponent(3, 1, 1, 1, 1, 1); // Cr component
 
             byte[] ycbcr = ArrayPool<byte>.Shared.Rent(3 * _width * _height);
             try
@@ -115,9 +115,9 @@ namespace JpegLibrary.Benchmarks
             encoder.SetHuffmanTable(false, 0, JpegStandardHuffmanEncodingTable.GetLuminanceACTable());
             encoder.SetHuffmanTable(true, 1, JpegStandardHuffmanEncodingTable.GetChrominanceDCTable());
             encoder.SetHuffmanTable(false, 1, JpegStandardHuffmanEncodingTable.GetChrominanceACTable());
-            encoder.AddComponent(0, 0, 0, 1, 1); // Y component
-            encoder.AddComponent(1, 1, 1, 2, 2); // Cb component
-            encoder.AddComponent(1, 1, 1, 2, 2); // Cr component
+            encoder.AddComponent(1, 0, 0, 0, 1, 1); // Y component
+            encoder.AddComponent(2, 1, 1, 1, 2, 2); // Cb component
+            encoder.AddComponent(3, 1, 1, 1, 2, 2); // Cr component
 
             byte[] ycbcr = ArrayPool<byte>.Shared.Rent(3 * _width * _height);
             try
@@ -146,9 +146,9 @@ namespace JpegLibrary.Benchmarks
             encoder.SetHuffmanTable(false, 0, JpegStandardHuffmanEncodingTable.GetLuminanceACTable());
             encoder.SetHuffmanTable(true, 1, JpegStandardHuffmanEncodingTable.GetChrominanceDCTable());
             encoder.SetHuffmanTable(false, 1, JpegStandardHuffmanEncodingTable.GetChrominanceACTable());
-            encoder.AddComponent(0, 0, 0, 1, 1); // Y component
-            encoder.AddComponent(1, 1, 1, 1, 1); // Cb component
-            encoder.AddComponent(1, 1, 1, 1, 1); // Cr component
+            encoder.AddComponent(1, 0, 0, 0, 1, 1); // Y component
+            encoder.AddComponent(2, 1, 1, 1, 1, 1); // Cb component
+            encoder.AddComponent(3, 1, 1, 1, 1, 1); // Cr component
 
             encoder.SetInputReader(new JpegRgbaInputReader(_width, _height, _rgba));
 
@@ -168,9 +168,9 @@ namespace JpegLibrary.Benchmarks
             encoder.SetHuffmanTable(false, 0, JpegStandardHuffmanEncodingTable.GetLuminanceACTable());
             encoder.SetHuffmanTable(true, 1, JpegStandardHuffmanEncodingTable.GetChrominanceDCTable());
             encoder.SetHuffmanTable(false, 1, JpegStandardHuffmanEncodingTable.GetChrominanceACTable());
-            encoder.AddComponent(0, 0, 0, 1, 1); // Y component
-            encoder.AddComponent(1, 1, 1, 2, 2); // Cb component
-            encoder.AddComponent(1, 1, 1, 2, 2); // Cr component
+            encoder.AddComponent(1, 0, 0, 0, 1, 1); // Y component
+            encoder.AddComponent(2, 1, 1, 1, 2, 2); // Cb component
+            encoder.AddComponent(3, 1, 1, 1, 2, 2); // Cr component
 
             encoder.SetInputReader(new JpegRgbaInputReader(_width, _height, _rgba));
 
