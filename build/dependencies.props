@@ -4,6 +4,6 @@
     <MicrosoftSourceLinkGitHubPackageVersion>1.0.0</MicrosoftSourceLinkGitHubPackageVersion>
     <SystemMemoryPackageVersion>4.5.3</SystemMemoryPackageVersion>
     <SystemNumericsVectorsPackageVersion>4.5.0</SystemNumericsVectorsPackageVersion>
-    <SystemRuntimeCompilerServicesUnsafePackageVersion>4.7.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>4.7.1</SystemRuntimeCompilerServicesUnsafePackageVersion>
   </PropertyGroup>
 </Project>
