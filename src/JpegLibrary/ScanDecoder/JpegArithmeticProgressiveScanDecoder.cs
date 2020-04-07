@@ -143,7 +143,7 @@ namespace JpegLibrary.ScanDecoder
             }
         }
 
-        private unsafe void DecodeProgressiveDataNonInterleaved(ref JpegReader reader, JpegScanHeader scanHeader, JpegArithmeticDecodingComponent component)
+        private void DecodeProgressiveDataNonInterleaved(ref JpegReader reader, JpegScanHeader scanHeader, JpegArithmeticDecodingComponent component)
         {
             JpegBlockAllocator allocator = _allocator;
             JpegBitReader bitReader = new JpegBitReader(reader.RemainingBytes);
