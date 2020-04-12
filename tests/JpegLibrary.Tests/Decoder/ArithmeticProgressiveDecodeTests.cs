@@ -11,10 +11,10 @@ namespace JpegLibrary.Tests.Decoder
         {
             string currentDir = Directory.GetCurrentDirectory();
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith.jpg")
+                Path.Join(currentDir, @"Assets/arithmetic_progressive/yellowcat_progressive_arith.jpg")
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith_restart.jpg")
+                Path.Join(currentDir, @"Assets/arithmetic_progressive/yellowcat_progressive_arith_restart.jpg")
             };
         }
 

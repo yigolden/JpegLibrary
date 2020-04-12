@@ -20,7 +20,7 @@ namespace JpegLibrary.Tests.Decoder
         {
             string currentDir = Directory.GetCurrentDirectory();
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\baseline\cramps.jpg"),
+                Path.Join(currentDir, @"Assets/baseline/cramps.jpg"),
                 new Metadata
                 {
                     Width = 800,
@@ -32,7 +32,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\baseline\HETissueSlide.jpg"),
+                Path.Join(currentDir, @"Assets/baseline/HETissueSlide.jpg"),
                 new Metadata
                 {
                     Width = 2048,
@@ -44,7 +44,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_sequential\testorig12.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_sequential/testorig12.jpg"),
                 new Metadata
                 {
                     Width = 227,
@@ -56,7 +56,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_progressive\yellowcat_progressive_restart.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_progressive/yellowcat_progressive_restart.jpg"),
                 new Metadata
                 {
                     Width = 720,
@@ -68,7 +68,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_progressive\progress.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_progressive/progress.jpg"),
                 new Metadata
                 {
                     Width = 341,
@@ -80,7 +80,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless1_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless1_s22.jpg"),
                 new Metadata
                 {
                     Width = 128,
@@ -92,7 +92,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_sequential\yellowcat_arith_restart.jpg"),
+                Path.Join(currentDir, @"Assets/arithmetic_sequential/yellowcat_arith_restart.jpg"),
                 new Metadata
                 {
                     Width = 720,
@@ -104,7 +104,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith.jpg"),
+                Path.Join(currentDir, @"Assets/arithmetic_progressive/yellowcat_progressive_arith.jpg"),
                 new Metadata
                 {
                     Width = 720,
@@ -116,7 +116,7 @@ namespace JpegLibrary.Tests.Decoder
                 }
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\arithmetic_progressive\yellowcat_progressive_arith_restart.jpg"),
+                Path.Join(currentDir, @"Assets/arithmetic_progressive/yellowcat_progressive_arith_restart.jpg"),
                 new Metadata
                 {
                     Width = 720,

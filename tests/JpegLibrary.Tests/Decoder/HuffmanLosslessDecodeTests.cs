@@ -11,25 +11,25 @@ namespace JpegLibrary.Tests.Decoder
         {
             string currentDir = Directory.GetCurrentDirectory();
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless1_s22.jpg")
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless1_s22.jpg")
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless2_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless2_s22.jpg"),
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless3_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless3_s22.jpg"),
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless4_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless4_s22.jpg"),
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless5_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless5_s22.jpg"),
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless6_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless6_s22.jpg"),
             };
             yield return new object[] {
-                Path.Join(currentDir, @"Assets\huffman_lossless\lossless7_s22.jpg"),
+                Path.Join(currentDir, @"Assets/huffman_lossless/lossless7_s22.jpg"),
             };
         }
 
