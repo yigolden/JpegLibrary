@@ -21,5 +21,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageVersion)" PrivateAssets="All"/>
+	<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="$(MicrosoftNETFrameworkReferenceAssembliesPackageVersion)" PrivateAssets="All"/>
   </ItemGroup>
 </Project>

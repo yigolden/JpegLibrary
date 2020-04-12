@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup Label="Package Versions">
+    <MicrosoftNETFrameworkReferenceAssembliesPackageVersion>1.0.0</MicrosoftNETFrameworkReferenceAssembliesPackageVersion>
     <MicrosoftSourceLinkGitHubPackageVersion>1.0.0</MicrosoftSourceLinkGitHubPackageVersion>
+
     <SystemMemoryPackageVersion>4.5.4</SystemMemoryPackageVersion>
     <SystemNumericsVectorsPackageVersion>4.5.0</SystemNumericsVectorsPackageVersion>
     <SystemRuntimeCompilerServicesUnsafePackageVersion>4.7.1</SystemRuntimeCompilerServicesUnsafePackageVersion>
