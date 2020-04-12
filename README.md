@@ -2,6 +2,8 @@
 
 A pure C# implementation of JPEG decoder and encoder.
 
+[![Build Status](https://dev.azure.com/jinyi0679/yigolden/_apis/build/status/yigolden.JpegLibrary?branchName=master)](https://dev.azure.com/jinyi0679/yigolden/_build/latest?definitionId=2&branchName=master)
+
 ## Supported Runtimes
 
 * .NET Framework 4.5+
