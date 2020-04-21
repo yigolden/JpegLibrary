@@ -248,23 +248,23 @@ namespace JpegLibrary.ScanDecoder
             {
                 // First scan
 
-                /* Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients */
+                // Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients
 
-                /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
+                // Table F.4: Point to statistics bin S0 for DC coefficient coding
                 ref byte st = ref Unsafe.Add(ref component.DcStatistics!.GetReference(), component.DcContext);
 
-                /* Figure F.19: Decode_DC_DIFF */
+                // Figure F.19: Decode_DC_DIFF
                 if (DecodeBinaryDecision(ref reader, ref st) == 0)
                 {
                     component.DcContext = 0;
                 }
                 else
                 {
-                    /* Figure F.21: Decoding nonzero value v */
-                    /* Figure F.22: Decoding the sign of v */
+                    // Figure F.21: Decoding nonzero value v
+                    // Figure F.22: Decoding the sign of v
                     int sign = DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 1));
                     st = ref Unsafe.Add(ref st, 2 + sign);
-                    /* Figure F.23: Decoding the magnitude category of v */
+                    // Figure F.23: Decoding the magnitude category of v
                     int m = DecodeBinaryDecision(ref reader, ref st);
                     if (m != 0)
                     {
@@ -278,21 +278,21 @@ namespace JpegLibrary.ScanDecoder
                             st = ref Unsafe.Add(ref st, 1);
                         }
                     }
-                    /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
+                    // Section F.1.4.4.1.2: Establish dc_context conditioning category
                     if (m < (int)((1L << component.DcTable!.DcL) >> 1))
                     {
-                        component.DcContext = 0; /* zero diff category */
+                        component.DcContext = 0; // zero diff category
                     }
                     else if (m > (int)((1L << component.DcTable!.DcU) >> 1))
                     {
-                        component.DcContext = 12 + (sign * 4); /* large diff category */
+                        component.DcContext = 12 + (sign * 4); // large diff category
                     }
                     else
                     {
-                        component.DcContext = 4 + (sign * 4);  /* small diff category */
+                        component.DcContext = 4 + (sign * 4);  // small diff category
                     }
                     int v = m;
-                    /* Figure F.24: Decoding the magnitude bit pattern of v */
+                    // Figure F.24: Decoding the magnitude bit pattern of v
                     st = ref Unsafe.Add(ref st, 14);
                     while ((m >>= 1) != 0)
                     {
@@ -329,9 +329,9 @@ namespace JpegLibrary.ScanDecoder
 
             if (scanHeader.SuccessiveApproximationBitPositionHigh == 0)
             {
-                /* Sections F.2.4.2 & F.1.4.4.2: Decoding of AC coefficients */
+                // Sections F.2.4.2 & F.1.4.4.2: Decoding of AC coefficients
 
-                /* Figure F.20: Decode_AC_coefficients */
+                // Figure F.20: Decode_AC_coefficients
                 int start = scanHeader.StartOfSpectralSelection;
                 int end = scanHeader.EndOfSpectralSelection;
                 int low = scanHeader.SuccessiveApproximationBitPositionLow;
@@ -352,11 +352,11 @@ namespace JpegLibrary.ScanDecoder
                             ThrowInvalidDataException("Invalid arithmetic code.");
                         }
                     }
-                    /* Figure F.21: Decoding nonzero value v */
-                    /* Figure F.22: Decoding the sign of v */
+                    // Figure F.21: Decoding nonzero value v
+                    // Figure F.22: Decoding the sign of v
                     int sign = DecodeBinaryDecision(ref reader, ref GetFixedBinReference());
                     st = ref Unsafe.Add(ref st, 2);
-                    /* Figure F.23: Decoding the magnitude category of v */
+                    // Figure F.23: Decoding the magnitude category of v
                     int m = DecodeBinaryDecision(ref reader, ref st);
                     if (m != 0)
                     {
@@ -375,7 +375,7 @@ namespace JpegLibrary.ScanDecoder
                         }
                     }
                     int v = m;
-                    /* Figure F.24: Decoding the magnitude bit pattern of v */
+                    // Figure F.24: Decoding the magnitude bit pattern of v
                     st = ref Unsafe.Add(ref st, 14);
                     while ((m >>= 1) != 0)
                     {
@@ -407,7 +407,7 @@ namespace JpegLibrary.ScanDecoder
             int p1 = 1 << scanHeader.SuccessiveApproximationBitPositionLow;
             int m1 = (-1) << scanHeader.SuccessiveApproximationBitPositionLow;
 
-            /* Establish EOBx (previous stage end-of-block) index */
+            // Establish EOBx (previous stage end-of-block) index
             int kex = end;
             for (; kex > 0; kex--)
             {
@@ -430,7 +430,7 @@ namespace JpegLibrary.ScanDecoder
                 while (true)
                 {
                     ref short coef = ref Unsafe.Add(ref blockDataRef, k);
-                    if (coef != 0) /* previously nonzero coef */
+                    if (coef != 0) // previously nonzero coef
                     {
                         if (DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 2)) != 0)
                         {
@@ -445,7 +445,7 @@ namespace JpegLibrary.ScanDecoder
                         }
                         break;
                     }
-                    if (DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 1)) != 0) /* newly nonzero coef */
+                    if (DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 1)) != 0) // newly nonzero coef
                     {
                         if (DecodeBinaryDecision(ref reader, ref GetFixedBinReference()) != 0)
                         {

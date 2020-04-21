@@ -182,9 +182,9 @@ namespace JpegLibrary.ScanDecoder
         {
             ref short destinationRef = ref Unsafe.As<JpegBlock8x8, short>(ref destinationBlock);
 
-            /* Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients */
+            // Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients
 
-            /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
+            // Table F.4: Point to statistics bin S0 for DC coefficient coding
             ref byte st = ref Unsafe.Add(ref component.DcStatistics!.GetReference(), component.DcContext);
 
             /* Figure F.19: Decode_DC_DIFF */
@@ -194,11 +194,11 @@ namespace JpegLibrary.ScanDecoder
             }
             else
             {
-                /* Figure F.21: Decoding nonzero value v */
-                /* Figure F.22: Decoding the sign of v */
+                // Figure F.21: Decoding nonzero value v
+                // Figure F.22: Decoding the sign of v
                 int sign = DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 1));
                 st = ref Unsafe.Add(ref st, 2 + sign);
-                /* Figure F.23: Decoding the magnitude category of v */
+                // Figure F.23: Decoding the magnitude category of v
                 int m = DecodeBinaryDecision(ref reader, ref st);
                 if (m != 0)
                 {
@@ -212,21 +212,21 @@ namespace JpegLibrary.ScanDecoder
                         st = ref Unsafe.Add(ref st, 1);
                     }
                 }
-                /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
+                // Section F.1.4.4.1.2: Establish dc_context conditioning category
                 if (m < (int)((1L << component.DcTable!.DcL) >> 1))
                 {
-                    component.DcContext = 0; /* zero diff category */
+                    component.DcContext = 0; // zero diff category
                 }
                 else if (m > (int)((1L << component.DcTable!.DcU) >> 1))
                 {
-                    component.DcContext = 12 + (sign * 4); /* large diff category */
+                    component.DcContext = 12 + (sign * 4); // large diff category
                 }
                 else
                 {
-                    component.DcContext = 4 + (sign * 4);  /* small diff category */
+                    component.DcContext = 4 + (sign * 4);  // small diff category
                 }
                 int v = m;
-                /* Figure F.24: Decoding the magnitude bit pattern of v */
+                // Figure F.24: Decoding the magnitude bit pattern of v
                 st = ref Unsafe.Add(ref st, 14);
                 while ((m >>= 1) != 0)
                 {
@@ -245,7 +245,7 @@ namespace JpegLibrary.ScanDecoder
 
             destinationRef = (short)component.DcPredictor;
 
-            /* Sections F.2.4.2 & F.1.4.4.2: Decoding of AC coefficients */
+            // Sections F.2.4.2 & F.1.4.4.2: Decoding of AC coefficients
             JpegArithmeticStatistics acStatistics = component.AcStatistics!;
             JpegArithmeticDecodingTable acTable = component.AcTable!;
 
@@ -254,7 +254,7 @@ namespace JpegLibrary.ScanDecoder
                 st = ref acStatistics.GetReference(3 * (k - 1));
                 if (DecodeBinaryDecision(ref reader, ref st) != 0)
                 {
-                    /* EOB flag */
+                    // EOB flag
                     break;
                 }
                 while (DecodeBinaryDecision(ref reader, ref Unsafe.Add(ref st, 1)) == 0)
@@ -266,11 +266,11 @@ namespace JpegLibrary.ScanDecoder
                         ThrowInvalidDataException("Invalid arithmetic code.");
                     }
                 }
-                /* Figure F.21: Decoding nonzero value v */
-                /* Figure F.22: Decoding the sign of v */
+                // Figure F.21: Decoding nonzero value v
+                // Figure F.22: Decoding the sign of v
                 int sign = DecodeBinaryDecision(ref reader, ref GetFixedBinReference());
                 st = ref Unsafe.Add(ref st, 2);
-                /* Figure F.23: Decoding the magnitude category of v */
+                // Figure F.23: Decoding the magnitude category of v
                 int m = DecodeBinaryDecision(ref reader, ref st);
                 if (m != 0)
                 {
@@ -289,7 +289,7 @@ namespace JpegLibrary.ScanDecoder
                     }
                 }
                 int v = m;
-                /* Figure F.24: Decoding the magnitude bit pattern of v */
+                // Figure F.24: Decoding the magnitude bit pattern of v
                 st = ref Unsafe.Add(ref st, 14);
                 while ((m >>= 1) != 0)
                 {

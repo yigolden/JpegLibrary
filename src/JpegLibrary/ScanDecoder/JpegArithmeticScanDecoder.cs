@@ -192,14 +192,13 @@ namespace JpegLibrary.ScanDecoder
             _ct = -16; // force reading 2 initial bytes to fill C
         }
 
-        /* The following function specifies the packing of the four components
-         * into the compact INT32 representation.
-         * Note that this formula must match the actual arithmetic encoder
-         * and decoder implementation.  The implementation has to be changed
-         * if this formula is changed.
-         * The current organization is leaned on Markus Kuhn's JBIG
-         * implementation (jbig_tab.c).
-         */
+        // The following function specifies the packing of the four components
+        // into the compact INT32 representation.
+        // Note that this formula must match the actual arithmetic encoder
+        // and decoder implementation.  The implementation has to be changed
+        // if this formula is changed.
+        // The current organization is leaned on Markus Kuhn's JBIG
+        // implementation (jbig_tab.c).
         private static int Pack(int i, int a, int b, int c, int d)
             => a << 16 | c << 8 | d << 7 | b;
 
@@ -318,10 +317,9 @@ namespace JpegLibrary.ScanDecoder
             Pack( 110, 0x5a10, 110, 111, 1 ),
             Pack( 111, 0x5522, 112, 109, 0 ),
             Pack( 112, 0x59eb, 112, 111, 1 ),
-            /*
-             * This last entry is used for fixed probability estimate of 0.5
-             * as suggested in Section 10.3 Table 5 of ITU-T Rec. T.851.
-             */
+
+            // This last entry is used for fixed probability estimate of 0.5
+            // as suggested in Section 10.3 Table 5 of ITU-T Rec. T.851.
             Pack( 113, 0x5a1d, 113, 113, 0 )
         };
     }
