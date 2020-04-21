@@ -21,7 +21,6 @@ namespace JpegLibrary
         public JpegHuffmanEncodingTable(JpegHuffmanCanonicalCode[] codes)
         {
             _codes = codes ?? throw new ArgumentNullException(nameof(codes));
-            Array.Sort(codes, JpegHuffmanCanonicalCodeCompareByCodeLen.Instance);
 
             int codeCount = 0;
             _symbolMap = new byte[256];
