@@ -68,6 +68,17 @@ namespace JpegLibrary.ScanDecoder
 
             // Resolve each component
             Span<JpegHuffmanDecodingComponent> components = _components.AsSpan(0, InitDecodeComponents(frameHeader, scanHeader, _components));
+            foreach (JpegHuffmanDecodingComponent component in components)
+            {
+                if (component.DcTable is null || component.AcTable is null)
+                {
+                    ThrowInvalidDataException($"Huffman table of component {component.ComponentIndex} is not defined.");
+                }
+                if (component.QuantizationTable.IsEmpty)
+                {
+                    ThrowInvalidDataException($"Quantization table of component {component.ComponentIndex} is not defined.");
+                }
+            }
 
             // Prepare
             int maxHorizontalSampling = _maxHorizontalSampling;

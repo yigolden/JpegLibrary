@@ -68,6 +68,13 @@ namespace JpegLibrary.ScanDecoder
 
             // Resolve each component
             Span<JpegHuffmanDecodingComponent> components = _components.AsSpan(0, InitDecodeComponents(_frameHeader, scanHeader, _components));
+            foreach (JpegHuffmanDecodingComponent component in components)
+            {
+                if (component.QuantizationTable.IsEmpty)
+                {
+                    ThrowInvalidDataException($"Quantization table of component {component.ComponentIndex} is not defined.");
+                }
+            }
 
             _restartInterval = Decoder.GetRestartInterval();
             _mcusBeforeRestart = _restartInterval;
@@ -85,6 +92,14 @@ namespace JpegLibrary.ScanDecoder
 
         private void DecodeProgressiveDataInterleaved(ref JpegReader reader, JpegScanHeader scanHeader, Span<JpegHuffmanDecodingComponent> components)
         {
+            foreach (JpegHuffmanDecodingComponent component in components)
+            {
+                if (component.DcTable is null)
+                {
+                    ThrowInvalidDataException($"Huffman table of component {component.ComponentIndex} is not defined.");
+                }
+            }
+
             JpegBlockAllocator allocator = _allocator;
             JpegBitReader bitReader = new JpegBitReader(reader.RemainingBytes);
 
@@ -134,6 +149,11 @@ namespace JpegLibrary.ScanDecoder
 
             if (scanHeader.StartOfSpectralSelection == 0)
             {
+                if (component.DcTable is null)
+                {
+                    ThrowInvalidDataException($"Huffman table of component {componentIndex} is not defined.");
+                }
+
                 for (int blockY = 0; blockY < verticalBlockCount; blockY++)
                 {
                     for (int blockX = 0; blockX < horizontalBlockCount; blockX++)
@@ -151,13 +171,19 @@ namespace JpegLibrary.ScanDecoder
             }
             else
             {
+                JpegHuffmanDecodingTable? acTable = component.AcTable;
+                if (acTable is null)
+                {
+                    ThrowInvalidDataException($"Huffman table of component {componentIndex} is not defined.");
+                }
+
                 for (int blockY = 0; blockY < verticalBlockCount; blockY++)
                 {
                     for (int blockX = 0; blockX < horizontalBlockCount; blockX++)
                     {
                         ref JpegBlock8x8 blockRef = ref allocator.GetBlockReference(componentIndex, blockX, blockY);
 
-                        ReadBlockProgressiveAC(ref bitReader, component, scanHeader, ref _eobrun, ref blockRef);
+                        ReadBlockProgressiveAC(ref bitReader, acTable, scanHeader, ref _eobrun, ref blockRef);
 
                         if (!HandleRestart(ref bitReader, ref reader))
                         {
@@ -227,10 +253,9 @@ namespace JpegLibrary.ScanDecoder
             }
         }
 
-        private static void ReadBlockProgressiveAC(ref JpegBitReader reader, JpegHuffmanDecodingComponent component, JpegScanHeader scanHeader, ref int eobrun, ref JpegBlock8x8 destinationBlock)
+        private static void ReadBlockProgressiveAC(ref JpegBitReader reader, JpegHuffmanDecodingTable acTable, JpegScanHeader scanHeader, ref int eobrun, ref JpegBlock8x8 destinationBlock)
         {
             ref short blockDataRef = ref Unsafe.As<JpegBlock8x8, short>(ref destinationBlock);
-            JpegHuffmanDecodingTable acTable = component.AcTable!;
 
             if (scanHeader.SuccessiveApproximationBitPositionHigh == 0)
             {
