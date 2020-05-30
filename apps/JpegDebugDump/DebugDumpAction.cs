@@ -44,7 +44,7 @@ namespace JpegDebugDump
             // We use RGBA PNG image to store 4 components.
             // Its content may be Grayscale, YCbCr or others.
             Rgba32[] pixels = new Rgba32[decoder.Width * decoder.Height];
-            Array.Fill(pixels, Rgba32.White);
+            Array.Fill(pixels, new Rgba32(255, 255, 255, 255));
             using var image = Image.WrapMemory(pixels.AsMemory(), decoder.Width, decoder.Height);
 
             // high bits

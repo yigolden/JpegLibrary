@@ -1,14 +1,13 @@
-﻿using System;
-using System.Buffers;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using JpegLibrary.ColorConverters;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
+using System;
+using System.Buffers;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace JpegLibrary.Benchmarks
 {
@@ -32,10 +31,10 @@ namespace JpegLibrary.Benchmarks
             using var image = new Image<Rgba32>(baseImage.Width * 4, baseImage.Height * 4);
             image.Mutate(ctx =>
             {
-                ctx.DrawImage(baseImage, new Point(0, 0), GraphicsOptions.Default);
-                ctx.DrawImage(baseImage, new Point(0, baseImage.Height), GraphicsOptions.Default);
-                ctx.DrawImage(baseImage, new Point(baseImage.Width, 0), GraphicsOptions.Default);
-                ctx.DrawImage(baseImage, new Point(baseImage.Width, baseImage.Height), GraphicsOptions.Default);
+                ctx.DrawImage(baseImage, new Point(0, 0), opacity: 1);
+                ctx.DrawImage(baseImage, new Point(0, baseImage.Height), opacity: 1);
+                ctx.DrawImage(baseImage, new Point(baseImage.Width, 0), opacity: 1);
+                ctx.DrawImage(baseImage, new Point(baseImage.Width, baseImage.Height), opacity: 1);
             });
             ms.Seek(0, SeekOrigin.Begin);
             ms.SetLength(0);
