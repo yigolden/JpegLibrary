@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 namespace JpegLibrary
 {
     /// <summary>
-    /// The encoder to encode image into JPEG stream.
+    /// The encoder to encode image into baseline JPEG stream.
     /// </summary>
     public class JpegEncoder
     {
@@ -157,18 +157,6 @@ namespace JpegLibrary
             }
             return default;
         }
-
-        /// <summary>
-        /// Add a component to encode.
-        /// </summary>
-        /// <param name="quantizationTableIdentifier">The identifier of the quantization table.</param>
-        /// <param name="huffmanDcTableIdentifier">The identifier of the DC Huffman table.</param>
-        /// <param name="huffmanAcTableIdentifier">The identifier of the AC Huffman table.</param>
-        /// <param name="horizontalSubsampling">The horizontal subsampling factor.</param>
-        /// <param name="verticalSubsampling">The horizontal subsampling factor.</param>
-        [Obsolete("This overload is obsolete.")]
-        public void AddComponent(byte quantizationTableIdentifier, byte huffmanDcTableIdentifier, byte huffmanAcTableIdentifier, byte horizontalSubsampling, byte verticalSubsampling)
-            => AddComponent((byte)(_encodeComponents?.Count ?? 0), quantizationTableIdentifier, huffmanDcTableIdentifier, huffmanAcTableIdentifier, horizontalSubsampling, verticalSubsampling);
 
         /// <summary>
         /// Add a component to encode.
