@@ -10,7 +10,7 @@ A pure C# implementation of JPEG decoder and encoder.
 * .NET Core 1.0+
 * .NET Standard 1.1+
 
-## Currently Supported Features
+## Supported Features
 
 
 ### Decode
