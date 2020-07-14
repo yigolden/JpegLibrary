@@ -36,16 +36,9 @@ namespace JpegLibrary.ScanDecoder
         }
 
         [DoesNotReturn]
-        protected static void ThrowInvalidDataException(string? message = null)
+        protected static void ThrowInvalidDataException(string message)
         {
-            if (message is null)
-            {
-                throw new InvalidDataException();
-            }
-            else
-            {
-                throw new InvalidDataException(message);
-            }
+            throw new InvalidDataException("Failed to decode JPEG data. " + message);
         }
 
         [DoesNotReturn]

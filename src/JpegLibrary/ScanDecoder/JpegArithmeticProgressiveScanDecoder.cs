@@ -101,7 +101,7 @@ namespace JpegLibrary.ScanDecoder
             {
                 if (component.DcTable is null || component.DcStatistics is null)
                 {
-                    ThrowInvalidDataException();
+                    ThrowInvalidDataException("DC table is missing.");
                 }
             }
 
@@ -156,7 +156,7 @@ namespace JpegLibrary.ScanDecoder
             {
                 if (component.DcTable is null || component.DcStatistics is null)
                 {
-                    ThrowInvalidDataException();
+                    ThrowInvalidDataException("DC table is missing.");
                 }
 
                 for (int blockY = 0; blockY < verticalBlockCount; blockY++)
@@ -178,7 +178,7 @@ namespace JpegLibrary.ScanDecoder
             {
                 if (component.AcTable is null || component.AcStatistics is null)
                 {
-                    ThrowInvalidDataException();
+                    ThrowInvalidDataException("AC table is missing");
                 }
 
                 for (int blockY = 0; blockY < verticalBlockCount; blockY++)
@@ -368,7 +368,7 @@ namespace JpegLibrary.ScanDecoder
                             {
                                 if ((m <<= 1) == 0x8000)
                                 {
-                                    ThrowInvalidDataException();
+                                    ThrowInvalidDataException("Invalid arithmetic code.");
                                 }
                                 st = ref Unsafe.Add(ref st, 1);
                             }
@@ -461,7 +461,7 @@ namespace JpegLibrary.ScanDecoder
                     k++;
                     if (k > end)
                     {
-                        ThrowInvalidDataException();
+                        ThrowInvalidDataException("Invalid arithmetic code.");
                     }
                 }
             }

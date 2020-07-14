@@ -81,7 +81,7 @@ namespace JpegLibrary.ScanDecoder
                 }
                 if (frameComponent is null)
                 {
-                    ThrowInvalidDataException();
+                    ThrowInvalidDataException("The specified component is missing.");
                 }
                 JpegArithmeticDecodingComponent component = components[i];
                 if (component is null)

@@ -55,15 +55,15 @@ namespace JpegLibrary.ScanDecoder
 
             if (frameHeader.Components is null)
             {
-                ThrowInvalidDataException();
+                ThrowInvalidDataException("Component parameters are missing in JPEG frame header.");
             }
             if (scanHeader.Components is null)
             {
-                ThrowInvalidDataException();
+                ThrowInvalidDataException("Component parameters are missing in JPEG scan header.");
             }
             if (outputWriter is null)
             {
-                ThrowInvalidDataException();
+                throw new InvalidOperationException("Output writer is not specified.");
             }
 
             // Resolve each component

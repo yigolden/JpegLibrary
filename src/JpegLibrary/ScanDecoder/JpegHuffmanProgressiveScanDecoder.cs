@@ -247,7 +247,7 @@ namespace JpegLibrary.ScanDecoder
                 // Refinement scan
                 if (!reader.TryReadBits(1, out int bits, out _))
                 {
-                    throw new InvalidDataException();
+                    ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                 }
                 blockDataRef |= (short)(bits << scanHeader.SuccessiveApproximationBitPositionLow);
             }
@@ -293,7 +293,7 @@ namespace JpegLibrary.ScanDecoder
                             {
                                 if (!reader.TryReadBits(r, out int bits, out _))
                                 {
-                                    throw new InvalidDataException();
+                                    ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                                 }
                                 eobrun += bits;
                             }
@@ -334,7 +334,7 @@ namespace JpegLibrary.ScanDecoder
                     {
                         if (!reader.TryReadBits(1, out int bits, out _))
                         {
-                            throw new InvalidDataException();
+                            ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                         }
                         s = bits != 0 ? p1 : m1;
                     }
@@ -348,7 +348,7 @@ namespace JpegLibrary.ScanDecoder
                             {
                                 if (!reader.TryReadBits(r, out int bits, out _))
                                 {
-                                    throw new InvalidDataException();
+                                    ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                                 }
                                 eobrun += bits;
                             }
@@ -364,7 +364,7 @@ namespace JpegLibrary.ScanDecoder
                         {
                             if (!reader.TryReadBits(1, out int bits, out _))
                             {
-                                throw new InvalidDataException();
+                                ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                             }
                             if (bits != 0)
                             {
@@ -402,7 +402,7 @@ namespace JpegLibrary.ScanDecoder
                     {
                         if (!reader.TryReadBits(1, out int bits, out _))
                         {
-                            throw new InvalidDataException();
+                            ThrowInvalidDataException("Unexpected end of JPEG data stream.");
                         }
                         if (bits != 0)
                         {
