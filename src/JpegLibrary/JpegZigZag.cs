@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
@@ -44,7 +45,7 @@ namespace JpegLibrary
         public static int InternalBlockIndexToBuffer(int index)
         {
             Debug.Assert((uint)index < 64);
-            return s_blockToBuffer[index];
+            return Unsafe.Add(ref MemoryMarshal.GetReference(s_blockToBuffer), index);
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace JpegLibrary
         public static int InternalBufferIndexToBlock(int index)
         {
             Debug.Assert((uint)index < 64);
-            return s_bufferToBlock[index];
+            return Unsafe.Add(ref MemoryMarshal.GetReference(s_bufferToBlock), index);
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace JpegLibrary
             {
                 ThrowArgumentOutOfRangeException(nameof(index));
             }
-            return s_blockToBuffer[index];
+            return Unsafe.Add(ref MemoryMarshal.GetReference(s_blockToBuffer), index);
         }
 
         /// <summary>
@@ -86,12 +87,12 @@ namespace JpegLibrary
             {
                 ThrowArgumentOutOfRangeException(nameof(index));
             }
-            return s_bufferToBlock[index];
+            return Unsafe.Add(ref MemoryMarshal.GetReference(s_bufferToBlock), index);
         }
 
         private static void ThrowArgumentOutOfRangeException(string parameterName)
         {
-            throw new ArgumentOutOfRangeException(nameof(parameterName));
+            throw new ArgumentOutOfRangeException(parameterName);
         }
 
     }
