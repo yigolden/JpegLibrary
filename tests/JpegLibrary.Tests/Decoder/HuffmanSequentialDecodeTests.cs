@@ -14,6 +14,9 @@ namespace JpegLibrary.Tests.Decoder
                 Path.Join(currentDir, @"Assets/baseline/cramps.jpg"),
             };
             yield return new object[] {
+                Path.Join(currentDir, @"Assets/baseline/lake.jpg"),
+            };
+            yield return new object[] {
                 Path.Join(currentDir, @"Assets/huffman_sequential/testorig12.jpg"),
             };
         }
