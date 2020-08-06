@@ -1,6 +1,6 @@
 # JpegLibrary
 
-A pure C# implementation of JPEG decoder and encoder.
+JPEG decoder, encoder and optimizer implemented in C#.
 
 [![Build Status](https://dev.azure.com/jinyi0679/yigolden/_apis/build/status/yigolden.JpegLibrary?branchName=master)](https://dev.azure.com/jinyi0679/yigolden/_build/latest?definitionId=2&branchName=master)
 
@@ -21,8 +21,14 @@ A pure C# implementation of JPEG decoder and encoder.
 * Decode arithmetic-coding sequential DCT-based JPEG (SOF9)
 * Decode arithmetic-coding progressive DCT-based JPEG (SOF10)
 
+See [JpegDecode](https://github.com/yigolden/JpegLibrary/blob/master/apps/JpegDecode/DecodeAction.cs) program for example.
+
 ### Encode
 * Encode Huffman-coding baseline DCT-based JPEG (SOF0) with optimized coding.
 
+See [JpegEncode](https://github.com/yigolden/JpegLibrary/blob/master/apps/JpegEncode/EncodeAction.cs) program for example.
+
 ### Optimize
 * Optimize an existing baseline image to use optimized Huffman coding.
+
+See [JpegOptimize](https://github.com/yigolden/JpegLibrary/blob/master/apps/JpegOptimize/OptimizeAction.cs) program for example.
