@@ -47,10 +47,6 @@ namespace JpegLibrary
         {
             if (!(_builders is null))
             {
-                foreach (TableBuilderWithIdentifier tableBuilder in _builders)
-                {
-                    //tableBuilder.TableBuilder.Dispose();
-                }
                 _builders.Clear();
                 _builders = null;
             }
