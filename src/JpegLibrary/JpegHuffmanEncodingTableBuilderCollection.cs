@@ -29,7 +29,7 @@ namespace JpegLibrary
             return table;
         }
 
-        public JpegHuffmanEncodingTableCollection BuildTables()
+        public JpegHuffmanEncodingTableCollection BuildTables(bool optimal = false)
         {
             if (_builders is null)
             {
@@ -38,7 +38,7 @@ namespace JpegLibrary
             var collection = new JpegHuffmanEncodingTableCollection();
             foreach (TableBuilderWithIdentifier builder in _builders)
             {
-                collection.AddTable(builder.TableClass, builder.Identifier, builder.TableBuilder.Build());
+                collection.AddTable(builder.TableClass, builder.Identifier, builder.TableBuilder.Build(optimal));
             }
             return collection;
         }

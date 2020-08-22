@@ -33,6 +33,11 @@ namespace JpegLibrary
         public JpegOptimizer() : this(4096) { }
 
         /// <summary>
+        /// True to generate the most optimal Huffman codes. This may takes more time than the standard method but yields better codes.
+        /// </summary>
+        public bool MostOptimalCoding { get; set; }
+
+        /// <summary>
         /// Initialize the decoder.
         /// </summary>
         /// <param name="minimumBufferSegmentSize">The minimum size of buffer to rent from the output writer.</param>
@@ -454,7 +459,7 @@ namespace JpegLibrary
             reader.TryAdvance(bytesConsumed);
 
             // Generate new huffman table
-            _encodingTables = tableBuilderCollection.BuildTables();
+            _encodingTables = tableBuilderCollection.BuildTables(MostOptimalCoding);
         }
 
         private static void ProcessBlockBaseline(ref JpegBitReader reader, JpegTranscodeComponent component)
