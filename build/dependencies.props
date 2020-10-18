@@ -6,6 +6,6 @@
 
     <SystemMemoryPackageVersion>4.5.4</SystemMemoryPackageVersion>
     <SystemNumericsVectorsPackageVersion>4.5.0</SystemNumericsVectorsPackageVersion>
-    <SystemRuntimeCompilerServicesUnsafePackageVersion>4.7.1</SystemRuntimeCompilerServicesUnsafePackageVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>5.0.0-rc.2.20475.5</SystemRuntimeCompilerServicesUnsafePackageVersion>
   </PropertyGroup>
 </Project>

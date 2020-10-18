@@ -4,24 +4,24 @@
   <PropertyGroup>
     <Title>JpegLibrary</Title>
     <Description>JPEG decoder, encoder and optimizer implemented in C#.</Description>
-    <TargetFrameworks>net45;netstandard1.1;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0;net5</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp2.1' AND '$(TargetFramework)' != 'netstandard2.1' AND '$(TargetFramework)' != 'netcoreapp3.0'">
-    <DefineConstants>$(DefineConstants);NO_MATH_CLAMP;NO_MATHF</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>$(DefineConstants);NO_MATH_CLAMP;NO_MATHF;NO_FAST_SPAN</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp2.1' AND '$(TargetFramework)' != 'netstandard2.1' AND '$(TargetFramework)' != 'netcoreapp3.0'">
-    <DefineConstants>$(DefineConstants);NO_FAST_SPAN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp3.0' AND '$(TargetFramework)' != 'netstandard2.1'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1'">
     <DefineConstants>$(DefineConstants);NO_NULLABLE_REFERENCE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp3.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1'">
     <DefineConstants>$(DefineConstants);NO_READONLYSEQUENCE_FISTSPAN;NO_BIT_OPERATIONS</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp3.0'">
+    <DefineConstants>$(DefineConstants);NO_SKIP_LOCALS_INIT</DefineConstants>
+  </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp3.0'">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0'">

@@ -3,13 +3,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-rc0003" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
   </ItemGroup>
 
