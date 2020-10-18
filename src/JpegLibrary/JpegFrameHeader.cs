@@ -84,7 +84,7 @@ namespace JpegLibrary
                 return false;
             }
 
-            Span<byte> local = stackalloc byte[8];
+            Span<byte> local = stackalloc byte[6];
             buffer.Slice(0, 6).CopyTo(local);
 
             byte numberOfComponenets = local[5];
@@ -289,7 +289,7 @@ namespace JpegLibrary
                 return false;
             }
 
-            Span<byte> local = stackalloc byte[4];
+            Span<byte> local = stackalloc byte[3];
             buffer.Slice(0, 3).CopyTo(local);
 
             byte quantizationTableSelector = local[2];

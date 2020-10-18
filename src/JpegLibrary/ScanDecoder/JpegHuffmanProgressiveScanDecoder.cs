@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace JpegLibrary.ScanDecoder
@@ -428,9 +427,12 @@ namespace JpegLibrary.ScanDecoder
             int levelShift = _levelShift;
             JpegHuffmanDecodingComponent[] components = _components;
 
-            JpegBlock8x8F blockFBuffer = default;
-            JpegBlock8x8F outputFBuffer = default;
-            JpegBlock8x8F tempFBuffer = default;
+            JpegBlock8x8F blockFBuffer;
+            JpegBlock8x8F outputFBuffer;
+            JpegBlock8x8F tempFBuffer;
+            Unsafe.SkipInit(out blockFBuffer);
+            Unsafe.SkipInit(out outputFBuffer);
+            Unsafe.SkipInit(out tempFBuffer);
 
             for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
             {

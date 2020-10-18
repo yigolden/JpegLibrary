@@ -160,65 +160,6 @@ namespace JpegLibrary
             return result;
         }
 
-        public static JpegBlock8x8F Load(Span<float> data)
-        {
-            JpegBlock8x8F result = default;
-            result.LoadFrom(data);
-            return result;
-        }
-
-        public static JpegBlock8x8F Load(Span<int> data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
-        {
-            this = default;
-        }
-
-        public void LoadFrom(Span<float> source)
-        {
-            if (source.Length < Size)
-            {
-                ThrowArgumentException("source is too short.");
-            }
-
-            ref byte s = ref Unsafe.As<float, byte>(ref MemoryMarshal.GetReference(source));
-            ref byte d = ref Unsafe.As<JpegBlock8x8F, byte>(ref this);
-
-            Unsafe.CopyBlock(ref d, ref s, Size * sizeof(float));
-        }
-
-        public void CopyTo(Span<float> destination)
-        {
-            if (destination.Length < Size)
-            {
-                ThrowArgumentException("destination is too short.");
-            }
-
-            ref byte d = ref Unsafe.As<float, byte>(ref MemoryMarshal.GetReference(destination));
-            ref byte s = ref Unsafe.As<JpegBlock8x8F, byte>(ref this);
-
-            Unsafe.CopyBlock(ref d, ref s, Size * sizeof(float));
-        }
-
-        public void CopyTo(Span<int> destination)
-        {
-            if (destination.Length < Size)
-            {
-                ThrowArgumentException("destination is too short.");
-            }
-
-            ref int d = ref MemoryMarshal.GetReference(destination);
-            ref float s = ref Unsafe.As<JpegBlock8x8F, float>(ref this);
-
-            for (int i = 0; i < Size; i++)
-            {
-                Unsafe.Add(ref d, i) = (int)Unsafe.Add(ref s, i);
-            }
-        }
-
         public void MultiplyInplace(float value)
         {
             V0L *= value;
