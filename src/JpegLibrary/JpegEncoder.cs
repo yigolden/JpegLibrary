@@ -748,7 +748,6 @@ namespace JpegLibrary
 
         private static void ReadBlock(JpegBlockInputReader inputReader, out JpegBlock8x8 block, int componentIndex, int x, int y, int h, int v)
         {
-            block = default;
             ref short blockRef = ref Unsafe.As<JpegBlock8x8, short>(ref block);
 
             if (h == 1 && v == 1)
@@ -762,7 +761,8 @@ namespace JpegLibrary
 
         private static void ReadBlockWithSubsample(JpegBlockInputReader inputReader, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsampling, int verticalSubsampling)
         {
-            JpegBlock8x8 temp = default;
+            JpegBlock8x8 temp;
+            Unsafe.SkipInit(out temp);
 
             ref short tempRef = ref Unsafe.As<JpegBlock8x8, short>(ref temp);
 
