@@ -438,9 +438,12 @@ namespace JpegLibrary
             int mcusPerColumn = (inputReader.Height + 8 * maxVerticalSampling - 1) / (8 * maxVerticalSampling);
             const int levelShift = 1 << (8 - 1);
 
-            JpegBlock8x8F inputFBuffer = default;
-            JpegBlock8x8F outputFBuffer = default;
-            JpegBlock8x8F tempFBuffer = default;
+            JpegBlock8x8F inputFBuffer;
+            JpegBlock8x8F outputFBuffer;
+            JpegBlock8x8F tempFBuffer;
+            Unsafe.SkipInit(out inputFBuffer);
+            Unsafe.SkipInit(out outputFBuffer);
+            Unsafe.SkipInit(out tempFBuffer);
 
             for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
             {
@@ -690,9 +693,12 @@ namespace JpegLibrary
 
             const int levelShift = 1 << (8 - 1);
 
-            JpegBlock8x8F inputFBuffer = default;
-            JpegBlock8x8F outputFBuffer = default;
-            JpegBlock8x8F tempFBuffer = default;
+            JpegBlock8x8F inputFBuffer;
+            JpegBlock8x8F outputFBuffer;
+            JpegBlock8x8F tempFBuffer;
+            Unsafe.SkipInit(out inputFBuffer);
+            Unsafe.SkipInit(out outputFBuffer);
+            Unsafe.SkipInit(out tempFBuffer);
 
             JpegBlock8x8 inputBuffer;
 
