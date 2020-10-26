@@ -477,12 +477,9 @@ namespace JpegLibrary.ScanDecoder
             int levelShift = _levelShift;
             JpegArithmeticDecodingComponent[] components = _components;
 
-            JpegBlock8x8F blockFBuffer;
-            JpegBlock8x8F outputFBuffer;
-            JpegBlock8x8F tempFBuffer;
-            Unsafe.SkipInit(out blockFBuffer);
-            Unsafe.SkipInit(out outputFBuffer);
-            Unsafe.SkipInit(out tempFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F blockFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F outputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F tempFBuffer);
 
             for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
             {

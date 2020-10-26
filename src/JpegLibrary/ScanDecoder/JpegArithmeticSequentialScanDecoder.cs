@@ -88,12 +88,9 @@ namespace JpegLibrary.ScanDecoder
             JpegBitReader bitReader = new JpegBitReader(reader.RemainingBytes);
 
             // DCT Block
-            JpegBlock8x8F blockFBuffer;
-            JpegBlock8x8F outputFBuffer;
-            JpegBlock8x8F tempFBuffer;
-            Unsafe.SkipInit(out blockFBuffer);
-            Unsafe.SkipInit(out outputFBuffer);
-            Unsafe.SkipInit(out tempFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F blockFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F outputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F tempFBuffer);
 
             JpegBlock8x8 outputBuffer;
 
@@ -326,8 +323,7 @@ namespace JpegLibrary.ScanDecoder
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void WriteBlockSlow(JpegBlockOutputWriter outputWriter, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsamplingFactor, int verticalSubsamplingFactor)
         {
-            JpegBlock8x8 tempBlock;
-            Unsafe.SkipInit(out tempBlock);
+            Unsafe.SkipInit(out JpegBlock8x8 tempBlock);
 
             int hShift = JpegMathHelper.Log2((uint)horizontalSubsamplingFactor);
             int vShift = JpegMathHelper.Log2((uint)verticalSubsamplingFactor);

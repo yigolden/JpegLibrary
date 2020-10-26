@@ -438,12 +438,9 @@ namespace JpegLibrary
             int mcusPerColumn = (inputReader.Height + 8 * maxVerticalSampling - 1) / (8 * maxVerticalSampling);
             const int levelShift = 1 << (8 - 1);
 
-            JpegBlock8x8F inputFBuffer;
-            JpegBlock8x8F outputFBuffer;
-            JpegBlock8x8F tempFBuffer;
-            Unsafe.SkipInit(out inputFBuffer);
-            Unsafe.SkipInit(out outputFBuffer);
-            Unsafe.SkipInit(out tempFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F inputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F outputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F tempFBuffer);
 
             for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
             {
@@ -693,14 +690,10 @@ namespace JpegLibrary
 
             const int levelShift = 1 << (8 - 1);
 
-            JpegBlock8x8F inputFBuffer;
-            JpegBlock8x8F outputFBuffer;
-            JpegBlock8x8F tempFBuffer;
-            Unsafe.SkipInit(out inputFBuffer);
-            Unsafe.SkipInit(out outputFBuffer);
-            Unsafe.SkipInit(out tempFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F inputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F outputFBuffer);
+            Unsafe.SkipInit(out JpegBlock8x8F tempFBuffer);
 
-            JpegBlock8x8 inputBuffer;
 
             for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
             {
@@ -723,7 +716,7 @@ namespace JpegLibrary
                             for (int x = 0; x < h; x++)
                             {
                                 // Read Block
-                                ReadBlock(inputReader, out inputBuffer, component.ComponentIndex, (offsetX + x) * 8, blockOffsetY, hs, vs);
+                                ReadBlock(inputReader, out JpegBlock8x8 inputBuffer, component.ComponentIndex, (offsetX + x) * 8, blockOffsetY, hs, vs);
 
                                 // Level shift
                                 ShiftDataLevel(ref inputBuffer, ref inputFBuffer, levelShift);
@@ -761,8 +754,7 @@ namespace JpegLibrary
 
         private static void ReadBlockWithSubsample(JpegBlockInputReader inputReader, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsampling, int verticalSubsampling)
         {
-            JpegBlock8x8 temp;
-            Unsafe.SkipInit(out temp);
+            Unsafe.SkipInit(out JpegBlock8x8 temp);
 
             ref short tempRef = ref Unsafe.As<JpegBlock8x8, short>(ref temp);
 

@@ -120,7 +120,7 @@ namespace JpegLibrary
                 return;
             }
 
-            JpegBlock8x8 block = default;
+            Unsafe.SkipInit(out JpegBlock8x8 block);
             JpegBlockOutputWriter? outputWriter = _writer;
             Debug.Assert(!(outputWriter is null));
 
@@ -190,7 +190,7 @@ namespace JpegLibrary
             }
             else
             {
-                JpegBlock8x8 tempBlock = default;
+                Unsafe.SkipInit(out JpegBlock8x8 tempBlock);
 
                 int hShift = JpegMathHelper.Log2((uint)horizontalSamplingFactor);
                 int vShift = JpegMathHelper.Log2((uint)verticalSamplingFactor);

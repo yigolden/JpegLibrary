@@ -158,7 +158,7 @@ namespace JpegLibrary
             }
             else
             {
-                JpegBlock8x8 tempBlock = default;
+                Unsafe.SkipInit(out JpegBlock8x8 tempBlock);
 
                 int hShift = JpegMathHelper.Log2((uint)horizontalSamplingFactor);
                 int vShift = JpegMathHelper.Log2((uint)verticalSamplingFactor);
