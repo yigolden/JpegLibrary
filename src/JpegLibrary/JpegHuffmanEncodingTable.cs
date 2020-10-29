@@ -8,7 +8,7 @@ namespace JpegLibrary
     /// <summary>
     /// A Huffman encoding table to encode symbols into JPEG stream.
     /// </summary>
-    public class JpegHuffmanEncodingTable
+    public class JpegHuffmanEncodingTable : IJpegEncodingTable
     {
         private readonly int _codeCount;
         private readonly JpegHuffmanCanonicalCode[] _codes;

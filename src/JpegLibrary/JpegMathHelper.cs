@@ -9,6 +9,14 @@ namespace JpegLibrary
 {
     internal static class JpegMathHelper
     {
+        private static ReadOnlySpan<byte> TrailingZeroCountDeBruijn => new byte[32]
+        {
+            00, 01, 28, 02, 29, 14, 24, 03,
+            30, 22, 20, 15, 25, 17, 04, 08,
+            31, 27, 13, 23, 21, 19, 16, 07,
+            26, 12, 18, 06, 11, 05, 10, 09
+        };
+
         private static ReadOnlySpan<byte> Log2DeBruijn => new byte[32]
         {
             00, 09, 01, 10, 13, 21, 02, 29,
@@ -57,7 +65,7 @@ namespace JpegLibrary
             return Math.Clamp(value, min, max);
 #endif
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Log2(uint value)
         {
@@ -65,6 +73,43 @@ namespace JpegLibrary
             return Log2SoftwareFallback(value);
 #else
             return BitOperations.Log2(value);
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int TrailingZeroCount(uint value)
+        {
+#if NO_BIT_OPERATIONS
+            if (value == 0)
+            {
+                return 32;
+            }
+
+            // uint.MaxValue >> 27 is always in range [0 - 31] so we use Unsafe.AddByteOffset to avoid bounds check
+            return Unsafe.AddByteOffset(
+                // Using deBruijn sequence, k=2, n=5 (2^5=32) : 0b_0000_0111_0111_1100_1011_0101_0011_0001u
+                ref MemoryMarshal.GetReference(TrailingZeroCountDeBruijn),
+                // uint|long -> IntPtr cast on 32-bit platforms does expensive overflow checks not needed here
+                (IntPtr)(int)(((value & (uint)-(int)value) * 0x077CB531u) >> 27)); // Multi-cast mitigates redundant conv.u8
+#else
+            return BitOperations.TrailingZeroCount(value);
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int TrailingZeroCount(ulong value)
+        {
+#if NO_BIT_OPERATIONS
+            uint lo = (uint)value;
+
+            if (lo == 0)
+            {
+                return 32 + TrailingZeroCount((uint)(value >> 32));
+            }
+
+            return TrailingZeroCount(lo);
+#else
+            return BitOperations.TrailingZeroCount(value);
 #endif
         }
 
@@ -93,5 +138,7 @@ namespace JpegLibrary
                 // uint|long -> IntPtr cast on 32-bit platforms does expensive overflow checks not needed here
                 (IntPtr)(int)((value * 0x07C4ACDDu) >> 27));
         }
+
+
     }
 }

@@ -11,7 +11,7 @@ namespace JpegLibrary
     /// <summary>
     /// A builder to build <see cref="JpegHuffmanEncodingTable"/>
     /// </summary>
-    public class JpegHuffmanEncodingTableBuilder
+    public class JpegHuffmanEncodingTableBuilder : IJpegEncodingTableBuilder<JpegHuffmanEncodingTable>
     {
         private int[] _frequencies;
 
