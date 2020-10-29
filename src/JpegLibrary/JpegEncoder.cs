@@ -224,6 +224,7 @@ namespace JpegLibrary
 
             var component = new JpegHuffmanEncodingComponent
             {
+                Index = components.Count,
                 ComponentIndex = componentIndex,
                 HorizontalSamplingFactor = horizontalSubsampling,
                 VerticalSamplingFactor = verticalSubsampling,
@@ -365,7 +366,7 @@ namespace JpegLibrary
             for (int i = 0; i < encodeComponents.Count; i++)
             {
                 JpegHuffmanEncodingComponent thisComponent = encodeComponents[i];
-                components[i] = new JpegFrameComponentSpecificationParameters((byte)(i + 1), thisComponent.HorizontalSamplingFactor, thisComponent.VerticalSamplingFactor, thisComponent.QuantizationTable.Identifier);
+                components[i] = new JpegFrameComponentSpecificationParameters((byte)thisComponent.ComponentIndex, thisComponent.HorizontalSamplingFactor, thisComponent.VerticalSamplingFactor, thisComponent.QuantizationTable.Identifier);
             }
             JpegFrameHeader frameHeader = new JpegFrameHeader(8, (ushort)input.Height, (ushort)input.Width, (byte)components.Length, components);
 
@@ -394,7 +395,7 @@ namespace JpegLibrary
             for (int i = 0; i < encodeComponents.Count; i++)
             {
                 JpegHuffmanEncodingComponent thisComponent = encodeComponents[i];
-                components[i] = new JpegScanComponentSpecificationParameters((byte)(i + 1), thisComponent.DcTableIdentifier, thisComponent.AcTableIdentifier);
+                components[i] = new JpegScanComponentSpecificationParameters((byte)thisComponent.ComponentIndex, thisComponent.DcTableIdentifier, thisComponent.AcTableIdentifier);
             }
             var scanHeader = new JpegScanHeader((byte)components.Length, components, 0, 63, 0, 0);
 
@@ -464,7 +465,7 @@ namespace JpegLibrary
                                 ref JpegBlock8x8 blockRef = ref allocator.GetBlockReference(index, offsetX + x, blockOffsetY);
 
                                 // Read Block
-                                ReadBlock(inputReader, out blockRef, component.ComponentIndex, (offsetX + x) * 8 * hs, blockOffsetY * 8 * vs, hs, vs);
+                                ReadBlock(inputReader, out blockRef, component.Index, (offsetX + x) * 8 * hs, blockOffsetY * 8 * vs, hs, vs);
 
                                 // Level shift
                                 ShiftDataLevel(ref blockRef, ref inputFBuffer, levelShift);
@@ -514,7 +515,7 @@ namespace JpegLibrary
                 {
                     foreach (JpegHuffmanEncodingComponent component in components)
                     {
-                        int index = component.ComponentIndex;
+                        int index = component.Index;
                         int h = component.HorizontalSamplingFactor;
                         int v = component.VerticalSamplingFactor;
                         int offsetX = colMcu * h;
@@ -630,7 +631,7 @@ namespace JpegLibrary
                 {
                     foreach (JpegHuffmanEncodingComponent component in components)
                     {
-                        int index = component.ComponentIndex;
+                        int index = component.Index;
                         int h = component.HorizontalSamplingFactor;
                         int v = component.VerticalSamplingFactor;
                         int offsetX = colMcu * h;
@@ -716,7 +717,7 @@ namespace JpegLibrary
                             for (int x = 0; x < h; x++)
                             {
                                 // Read Block
-                                ReadBlock(inputReader, out JpegBlock8x8 inputBuffer, component.ComponentIndex, (offsetX + x) * 8, blockOffsetY, hs, vs);
+                                ReadBlock(inputReader, out JpegBlock8x8 inputBuffer, component.Index, (offsetX + x) * 8, blockOffsetY, hs, vs);
 
                                 // Level shift
                                 ShiftDataLevel(ref inputBuffer, ref inputFBuffer, levelShift);

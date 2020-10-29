@@ -4,6 +4,7 @@ namespace JpegLibrary
 {
     internal class JpegHuffmanEncodingComponent
     {
+        public int Index { get; internal set; }
         public int ComponentIndex { get; internal set; }
         public byte HorizontalSamplingFactor { get; internal set; }
         public byte VerticalSamplingFactor { get; internal set; }
