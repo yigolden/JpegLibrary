@@ -219,22 +219,33 @@ namespace JpegLibrary
             return frameHeader;
         }
 
-        protected void WriteScan(ref JpegWriter writer, JpegScanComponentEncodingSpecification[] componentSpecifications, JpegScanProgressiveEncodingSpecification progressiveSpecification, JpegBlockAllocator? allocator = null)
+        protected void WriteScanData(ref JpegWriter writer, JpegFrameHeader frameHeader, JpegScanComponentEncodingSpecification componentSpecification, JpegScanProgressiveEncodingSpecification progressiveSpecification, JpegBlockAllocator allocator)
         {
-            
-            
+#if NO_FAST_SPAN
+            JpegScanComponentEncodingSpecification[] componentSpecifications = new JpegScanComponentEncodingSpecification[1];
+            componentSpecifications[0] = componentSpecification;
+#else
+            ReadOnlySpan<JpegScanComponentEncodingSpecification> componentSpecifications = MemoryMarshal.CreateReadOnlySpan(ref componentSpecification, 1);
+#endif
 
+            WriteScanData(ref writer, frameHeader, componentSpecifications, progressiveSpecification, allocator);
         }
 
-        protected void WriteStartOfScan(ref JpegWriter writer, JpegScanComponentEncodingSpecification[] componentSpecifications, JpegScanProgressiveEncodingSpecification progressiveSpecification)
+        protected void WriteScanData(ref JpegWriter writer, JpegFrameHeader frameHeader, ReadOnlySpan<JpegScanComponentEncodingSpecification> componentSpecifications, JpegScanProgressiveEncodingSpecification progressiveSpecification, JpegBlockAllocator allocator)
         {
+            int numOfComponents = componentSpecifications.Length;
+            if (numOfComponents > 4)
+            {
+                throw new ArgumentException("Too many components.", nameof(componentSpecifications));
+            }
+
             List<JpegEncodingComponent>? encodingComponents = _encodingComponents;
             if (encodingComponents is null || encodingComponents.Count == 0)
             {
                 throw new InvalidOperationException("No component is specified.");
             }
-            JpegScanComponentSpecificationParameters[] components = new JpegScanComponentSpecificationParameters[componentSpecifications.Length];
-            for (int i = 0; i < components.Length; i++)
+            Span<JpegScanComponentSpecificationParameters> components = stackalloc JpegScanComponentSpecificationParameters[4];
+            for (int i = 0; i < numOfComponents; i++)
             {
                 JpegScanComponentEncodingSpecification componentSpecification = componentSpecifications[i];
                 JpegEncodingComponent? component = null;
@@ -254,7 +265,97 @@ namespace JpegLibrary
                 components[i] = new JpegScanComponentSpecificationParameters((byte)(i + 1), componentSpecification.DcTableIdentifier, componentSpecification.AcTableIdentifier);
             }
 
-            var scanHeader = new JpegScanHeader((byte)components.Length, components, progressiveSpecification.StartOfSpectralSelection, progressiveSpecification.EndOfSpectralSelection, progressiveSpecification.SuccessiveApproximationBitPositionHigh, progressiveSpecification.SuccessiveApproximationBitPositionLow);
+            // Compute maximum sampling factor and reset DC predictor
+            int maxHorizontalSampling = 1;
+            int maxVerticalSampling = 1;
+            foreach (var currentComponent in components)
+            {
+                currentComponent.DcPredictor = 0;
+                maxHorizontalSampling = Math.Max(maxHorizontalSampling, currentComponent.HorizontalSamplingFactor);
+                maxVerticalSampling = Math.Max(maxVerticalSampling, currentComponent.VerticalSamplingFactor);
+            }
+
+            int mcusPerLine = (frameHeader.SamplesPerLine + 8 * maxHorizontalSampling - 1) / (8 * maxHorizontalSampling);
+            int mcusPerColumn = (frameHeader.NumberOfLines + 8 * maxVerticalSampling - 1) / (8 * maxVerticalSampling);
+
+            writer.EnterBitMode();
+
+            for (int rowMcu = 0; rowMcu < mcusPerColumn; rowMcu++)
+            {
+                for (int colMcu = 0; colMcu < mcusPerLine; colMcu++)
+                {
+                    foreach (var component in components)
+                    {
+                        int index = component.Index;
+                        int h = component.HorizontalSamplingFactor;
+                        int v = component.VerticalSamplingFactor;
+                        int offsetX = colMcu * h;
+                        int offsetY = rowMcu * v;
+
+                        for (int y = 0; y < v; y++)
+                        {
+                            int blockOffsetY = offsetY + y;
+                            for (int x = 0; x < h; x++)
+                            {
+                                ref JpegBlock8x8 blockRef = ref allocator.GetBlockReference(index, offsetX + x, blockOffsetY);
+
+                                EncodeBlock(ref writer, component, ref blockRef);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Padding
+            writer.ExitBitMode();
+        }
+
+        protected void WriterStartOfScan(ref JpegWriter writer, JpegScanComponentEncodingSpecification componentSpecification, JpegScanProgressiveEncodingSpecification progressiveSpecification)
+        {
+#if NO_FAST_SPAN
+            JpegScanComponentEncodingSpecification[] componentSpecifications = new JpegScanComponentEncodingSpecification[1];
+            componentSpecifications[0] = componentSpecification;
+#else
+            ReadOnlySpan<JpegScanComponentEncodingSpecification> componentSpecifications = MemoryMarshal.CreateReadOnlySpan(ref componentSpecification, 1);
+#endif
+            WriteStartOfScan(ref writer, componentSpecifications, progressiveSpecification);
+        }
+
+        protected void WriteStartOfScan(ref JpegWriter writer, ReadOnlySpan<JpegScanComponentEncodingSpecification> componentSpecifications, JpegScanProgressiveEncodingSpecification progressiveSpecification)
+        {
+            int numOfComponents = componentSpecifications.Length;
+            if (numOfComponents > 4)
+            {
+                throw new ArgumentException("Too many components.", nameof(componentSpecifications));
+            }
+
+            List<JpegEncodingComponent>? encodingComponents = _encodingComponents;
+            if (encodingComponents is null || encodingComponents.Count == 0)
+            {
+                throw new InvalidOperationException("No component is specified.");
+            }
+            Span<JpegScanComponentSpecificationParameters> components = stackalloc JpegScanComponentSpecificationParameters[4];
+            for (int i = 0; i < numOfComponents; i++)
+            {
+                JpegScanComponentEncodingSpecification componentSpecification = componentSpecifications[i];
+                JpegEncodingComponent? component = null;
+                for (int j = 0; j < encodingComponents.Count; j++)
+                {
+                    if (componentSpecification.ComponentIndex == encodingComponents[j].ComponentIndex)
+                    {
+                        component = encodingComponents[j];
+                        break;
+                    }
+                }
+                if (component is null)
+                {
+                    throw new InvalidOperationException($"Component {componentSpecification.ComponentIndex} not found.");
+                }
+
+                components[i] = new JpegScanComponentSpecificationParameters((byte)(i + 1), componentSpecification.DcTableIdentifier, componentSpecification.AcTableIdentifier);
+            }
+
+            var scanHeader = new JpegScanHeaderWriter(components.Slice(0, numOfComponents), progressiveSpecification.StartOfSpectralSelection, progressiveSpecification.EndOfSpectralSelection, progressiveSpecification.SuccessiveApproximationBitPositionHigh, progressiveSpecification.SuccessiveApproximationBitPositionLow);
 
             writer.WriteMarker(JpegMarker.StartOfScan);
             byte bytesCount = scanHeader.BytesRequired;
@@ -425,13 +526,13 @@ namespace JpegLibrary
             }
         }
 
-        
+
         private static int CountZeros(ref long x)
         {
             int result = JpegMathHelper.TrailingZeroCount((ulong)x);
             x >>= result;
             return result;
         }
-        
+
     }
 }

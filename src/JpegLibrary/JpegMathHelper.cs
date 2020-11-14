@@ -9,6 +9,7 @@ namespace JpegLibrary
 {
     internal static class JpegMathHelper
     {
+#if NO_BIT_OPERATIONS
         private static ReadOnlySpan<byte> TrailingZeroCountDeBruijn => new byte[32]
         {
             00, 01, 28, 02, 29, 14, 24, 03,
@@ -24,6 +25,7 @@ namespace JpegLibrary
             08, 12, 20, 28, 15, 17, 24, 07,
             19, 27, 23, 06, 26, 05, 04, 31
         };
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RoundToInt32(float value)
@@ -113,6 +115,7 @@ namespace JpegLibrary
 #endif
         }
 
+#if NO_BIT_OPERATIONS
         /// <summary>
         /// Returns the integer (floor) log of the specified value, base 2.
         /// Note that by convention, input value 0 returns 0 since Log(0) is undefined.
@@ -138,7 +141,7 @@ namespace JpegLibrary
                 // uint|long -> IntPtr cast on 32-bit platforms does expensive overflow checks not needed here
                 (IntPtr)(int)((value * 0x07C4ACDDu) >> 27));
         }
-
+#endif
 
     }
 }
