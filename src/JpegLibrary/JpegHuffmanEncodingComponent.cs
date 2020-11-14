@@ -4,6 +4,7 @@ namespace JpegLibrary
 {
     internal class JpegHuffmanEncodingComponent : JpegEncodingComponent
     {
+        internal int Index { get; set; }
         internal int DcPredictor { get; set; }
         internal byte DcTableIdentifier { get; set; }
         internal byte AcTableIdentifier { get; set; }

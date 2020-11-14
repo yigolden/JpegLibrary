@@ -14,7 +14,6 @@ steps:
   displayName: 'Install .NET Core SDK'
   inputs:
     version: 5.0.x
-    includePreviewVersions: true
     performMultiLevelLookup: true
 
 - task: DotNetCoreCLI@2
