@@ -1,11 +1,9 @@
-﻿#nullable enable
-
-namespace JpegLibrary
+﻿namespace JpegLibrary
 {
     /// <summary>
     /// A output writer that write spatial block to the destination buffer.
     /// </summary>
-    public abstract partial class JpegBlockOutputWriter : IJpegBlockOutputWriter
+    public interface IJpegBlockOutputWriter
     {
         /// <summary>
         /// Write a 8x8 spatial block into the destination buffer.

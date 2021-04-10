@@ -114,10 +114,10 @@ namespace JpegLibrary
         }
 
         /// <summary>
-        /// Flush the blocks into the specified <see cref="JpegBlockOutputWriter"/>.
+        /// Flush the blocks into the specified <see cref="IJpegBlockOutputWriter"/>.
         /// </summary>
         /// <param name="outputWriter">The output writer.</param>
-        public void Flush(JpegBlockOutputWriter outputWriter)
+        public void Flush<TWriter>(TWriter outputWriter) where TWriter : notnull, IJpegBlockOutputWriter
         {
             if (outputWriter is null)
             {
@@ -148,7 +148,8 @@ namespace JpegLibrary
             }
         }
 
-        private static void WriteBlock(JpegBlockOutputWriter outputWriter, in JpegBlock8x8 block, int componentIndex, int x, int y, int horizontalSamplingFactor, int verticalSamplingFactor)
+        private static void WriteBlock<TWriter>(TWriter outputWriter, in JpegBlock8x8 block, int componentIndex, int x, int y, int horizontalSamplingFactor, int verticalSamplingFactor)
+            where TWriter : notnull, IJpegBlockOutputWriter
         {
             ref short blockRef = ref Unsafe.As<JpegBlock8x8, short>(ref Unsafe.AsRef(block));
 

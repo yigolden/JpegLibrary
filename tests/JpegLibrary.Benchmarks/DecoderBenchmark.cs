@@ -71,5 +71,31 @@ namespace JpegLibrary.Benchmarks
                 ArrayPool<byte>.Shared.Return(ycbcr);
             }
         }
+
+
+        [Benchmark]
+        public void TestJpegLibraryStruct()
+        {
+            var decoder = new JpegDecoder<Jpeg3ComponentStructOutputWriter>();
+            decoder.SetInput(_inputBytes);
+            decoder.Identify();
+            int width = decoder.Width;
+            int height = decoder.Height;
+            Rgba32[] rgba = new Rgba32[width * height];
+            byte[] ycbcr = ArrayPool<byte>.Shared.Rent(3 * rgba.Length);
+            try
+            {
+                var outputWriter = new Jpeg3ComponentStructOutputWriter(ycbcr, decoder.Width, decoder.Height);
+                decoder.SetOutputWriter(outputWriter);
+                decoder.Decode();
+
+                JpegYCbCrToRgbConverter.Shared.ConvertYCbCr8ToRgba32(ycbcr, MemoryMarshal.AsBytes(rgba.AsSpan()), decoder.Width * decoder.Height);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(ycbcr);
+            }
+        }
+
     }
 }

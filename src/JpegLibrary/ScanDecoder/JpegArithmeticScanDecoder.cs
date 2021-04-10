@@ -6,11 +6,12 @@ using System.Diagnostics;
 
 namespace JpegLibrary.ScanDecoder
 {
-    internal abstract class JpegArithmeticScanDecoder : JpegScanDecoder
+    internal abstract class JpegArithmeticScanDecoder<TWriter> : JpegScanDecoder
+        where TWriter: notnull, IJpegBlockOutputWriter
     {
-        protected JpegDecoder Decoder { get; private set; }
+        protected IJpegDecoder<TWriter> Decoder { get; private set; }
 
-        public JpegArithmeticScanDecoder(JpegDecoder decoder)
+        public JpegArithmeticScanDecoder(IJpegDecoder<TWriter> decoder)
         {
             Decoder = decoder;
 

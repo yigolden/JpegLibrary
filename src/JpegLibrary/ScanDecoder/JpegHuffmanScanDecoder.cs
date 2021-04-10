@@ -5,11 +5,12 @@ using System.Diagnostics;
 
 namespace JpegLibrary.ScanDecoder
 {
-    internal abstract class JpegHuffmanScanDecoder : JpegScanDecoder
+    internal abstract class JpegHuffmanScanDecoder<TWriter> : JpegScanDecoder
+        where TWriter: notnull, IJpegBlockOutputWriter
     {
-        protected JpegDecoder Decoder { get; private set; }
+        protected IJpegDecoder<TWriter> Decoder { get; private set; }
 
-        public JpegHuffmanScanDecoder(JpegDecoder decoder)
+        public JpegHuffmanScanDecoder(IJpegDecoder<TWriter> decoder)
         {
             Decoder = decoder;
         }

@@ -5,7 +5,8 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary.ScanDecoder
 {
-    internal sealed class JpegHuffmanLosslessScanDecoder : JpegHuffmanScanDecoder
+    internal sealed class JpegHuffmanLosslessScanDecoder<TWriter> : JpegHuffmanScanDecoder<TWriter>
+        where TWriter : notnull, IJpegBlockOutputWriter
     {
         private readonly JpegFrameHeader _frameHeader;
 
@@ -13,10 +14,10 @@ namespace JpegLibrary.ScanDecoder
         private readonly int _mcusPerLine;
         private readonly int _mcusPerColumn;
 
-        private readonly JpegPartialScanlineAllocator _allocator;
+        private readonly JpegPartialScanlineAllocator<TWriter> _allocator;
         private readonly JpegHuffmanDecodingComponent[] _components;
 
-        public JpegHuffmanLosslessScanDecoder(JpegDecoder decoder, JpegFrameHeader frameHeader) : base(decoder)
+        public JpegHuffmanLosslessScanDecoder(IJpegDecoder<TWriter> decoder, JpegFrameHeader frameHeader) : base(decoder)
         {
             _frameHeader = frameHeader;
 
@@ -33,12 +34,7 @@ namespace JpegLibrary.ScanDecoder
             _mcusPerLine = (frameHeader.SamplesPerLine + maxHorizontalSampling - 1) / maxHorizontalSampling;
             _mcusPerColumn = (frameHeader.NumberOfLines + maxVerticalSampling - 1) / maxVerticalSampling;
 
-            JpegBlockOutputWriter? outputWriter = decoder.GetOutputWriter();
-            if (outputWriter is null)
-            {
-                ThrowInvalidDataException("Output writer is not set.");
-            }
-            _allocator = new JpegPartialScanlineAllocator(outputWriter, decoder.MemoryPool);
+            _allocator = new JpegPartialScanlineAllocator<TWriter>(decoder.GetOutputWriter(), decoder.MemoryPool);
             _allocator.Allocate(frameHeader);
 
             // Pre-allocate the JpegDecodeComponent instances
@@ -70,7 +66,7 @@ namespace JpegLibrary.ScanDecoder
                 }
             }
 
-            JpegPartialScanlineAllocator allocator = _allocator;
+            JpegPartialScanlineAllocator<TWriter> allocator = _allocator;
             int mcusPerLine = _mcusPerLine;
             int mcusPerColumn = _mcusPerColumn;
 
@@ -224,8 +220,7 @@ namespace JpegLibrary.ScanDecoder
 
         public override void Dispose()
         {
-            JpegPartialScanlineAllocator allocator = _allocator;
-
+            JpegPartialScanlineAllocator<TWriter> allocator = _allocator;
             allocator.Dispose();
         }
 

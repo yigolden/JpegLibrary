@@ -8,14 +8,15 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary
 {
-    internal sealed class JpegPartialScanlineAllocator
+    internal sealed class JpegPartialScanlineAllocator<TWriter>
+        where TWriter : notnull, IJpegBlockOutputWriter
     {
-        private readonly JpegBlockOutputWriter _writer;
+        private readonly TWriter _writer;
         private readonly MemoryPool<byte> _memoryPool;
         private IMemoryOwner<byte>? _bufferHandle;
         private ComponentAllocation[]? _components;
 
-        internal JpegPartialScanlineAllocator(JpegBlockOutputWriter writer, MemoryPool<byte>? memoryPool = null)
+        internal JpegPartialScanlineAllocator(TWriter writer, MemoryPool<byte>? memoryPool = null)
         {
             _writer = writer;
             _memoryPool = memoryPool ?? MemoryPool<byte>.Shared;
@@ -121,8 +122,7 @@ namespace JpegLibrary
             }
 
             Unsafe.SkipInit(out JpegBlock8x8 block);
-            JpegBlockOutputWriter? outputWriter = _writer;
-            Debug.Assert(!(outputWriter is null));
+            TWriter outputWriter = _writer;
 
             ComponentAllocation component = components[componentIndex];
             int width = component.Width;
@@ -176,11 +176,11 @@ namespace JpegLibrary
                     }
                 }
 
-                WriteBlock(outputWriter!, block, componentIndex, component.HorizontalSubsamplingFactor * x, component.VerticalSubsamplingFactor * y, component.HorizontalSubsamplingFactor, component.VerticalSubsamplingFactor);
+                WriteBlock(outputWriter, block, componentIndex, component.HorizontalSubsamplingFactor * x, component.VerticalSubsamplingFactor * y, component.HorizontalSubsamplingFactor, component.VerticalSubsamplingFactor);
             }
         }
 
-        private static void WriteBlock(JpegBlockOutputWriter outputWriter, in JpegBlock8x8 block, int componentIndex, int x, int y, int horizontalSamplingFactor, int verticalSamplingFactor)
+        private static void WriteBlock(TWriter outputWriter, in JpegBlock8x8 block, int componentIndex, int x, int y, int horizontalSamplingFactor, int verticalSamplingFactor)
         {
             ref short blockRef = ref Unsafe.As<JpegBlock8x8, short>(ref Unsafe.AsRef(block));
 
