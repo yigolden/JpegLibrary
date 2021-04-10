@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using JpegLibrary.ScanDecoder;
+﻿using JpegLibrary.ScanDecoder;
 using System;
 using System.Buffers;
 using System.Buffers.Binary;
@@ -8,15 +6,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JpegLibrary
 {
     /// <summary>
     /// The decoder to decode image from JPEG stream.
     /// </summary>
-    public class JpegDecoder : IJpegDecoder<JpegBlockOutputWriter>
+    public class JpegDecoder<TWriter> : IJpegDecoder<TWriter> where TWriter : notnull, IJpegBlockOutputWriter
     {
         private ReadOnlySequence<byte> _inputBuffer;
 
@@ -25,7 +26,7 @@ namespace JpegLibrary
         private byte? _maxHorizontalSamplingFactor;
         private byte? _maxVerticalSamplingFactor;
 
-        private JpegBlockOutputWriter? _outputWriter;
+        private TWriter? _outputWriter;
         private JpegScanDecoder? _scanDecoder;
 
         private List<JpegQuantizationTable>? _quantizationTables;
@@ -61,6 +62,7 @@ namespace JpegLibrary
             _restartInterval = 0;
         }
 
+
         /// <summary>
         /// Scan the stream for JPEG image information.
         /// </summary>
@@ -74,11 +76,6 @@ namespace JpegLibrary
         /// <returns>The length of the JPEG stream.</returns>
         public virtual int Identify(bool loadQuantizationTables)
         {
-            if (_inputBuffer.IsEmpty)
-            {
-                throw new InvalidOperationException("Input buffer is not specified.");
-            }
-
             JpegReader reader = new JpegReader(_inputBuffer);
 
             // Reset frame header
@@ -103,6 +100,7 @@ namespace JpegLibrary
 
             return reader.ConsumedByteCount;
         }
+
 
         /// <summary>
         /// This routine is called when <see cref="Identify(bool)"/> meets a marker in the JPEG stream.
@@ -160,6 +158,7 @@ namespace JpegLibrary
 
             return true;
         }
+
 
         /// <summary>
         /// Estimate the image quality factor from quantization tables.
@@ -262,6 +261,7 @@ namespace JpegLibrary
             }
         }
 
+
         private void ProcessFrameHeader(ref JpegReader reader, bool metadataOnly, bool overrideAllowed)
         {
             // Read length field
@@ -287,6 +287,7 @@ namespace JpegLibrary
             }
             _frameHeader = frameHeader;
         }
+
 
         private static JpegScanHeader ProcessScanHeader(ref JpegReader reader, bool metadataOnly)
         {
@@ -498,7 +499,7 @@ namespace JpegLibrary
         /// Set the output buffer writer.
         /// </summary>
         /// <param name="outputWriter">The output buffer writer.</param>
-        public void SetOutputWriter(JpegBlockOutputWriter outputWriter)
+        public void SetOutputWriter(TWriter outputWriter)
         {
             _outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         }
@@ -883,7 +884,7 @@ namespace JpegLibrary
             return null;
         }
 
-        JpegArithmeticDecodingTable? IJpegDecoder<JpegBlockOutputWriter>.GetArithmeticTable(bool isDcTable, byte identifier)
+        JpegArithmeticDecodingTable? IJpegDecoder<TWriter>.GetArithmeticTable(bool isDcTable, byte identifier)
         {
             List<JpegArithmeticDecodingTable>? arithmeticTables = _arithmeticTables;
             if (arithmeticTables is null)
@@ -963,7 +964,7 @@ namespace JpegLibrary
             _quantizationTables?.Clear();
         }
 
-        JpegBlockOutputWriter IJpegDecoder<JpegBlockOutputWriter>.GetOutputWriter()
+        TWriter IJpegDecoder<TWriter>.GetOutputWriter()
         {
             return _outputWriter ?? throw new InvalidOperationException();
         }
@@ -973,7 +974,8 @@ namespace JpegLibrary
         /// </summary>
         public void ResetOutputWriter()
         {
-            _outputWriter = null;
+            _outputWriter = default;
         }
+
     }
 }

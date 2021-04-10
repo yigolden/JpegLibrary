@@ -15,21 +15,21 @@ namespace JpegLibrary.ScanDecoder
 
         public abstract void Dispose();
 
-        public static JpegScanDecoder? Create(JpegMarker sofMarker, JpegDecoder decoder, JpegFrameHeader header)
+        public static JpegScanDecoder? Create<TWriter>(JpegMarker sofMarker, IJpegDecoder<TWriter> decoder, JpegFrameHeader header) where TWriter: notnull, IJpegBlockOutputWriter
         {
             switch (sofMarker)
             {
                 case JpegMarker.StartOfFrame0:
                 case JpegMarker.StartOfFrame1:
-                    return new JpegHuffmanBaselineScanDecoder(decoder, header);
+                    return new JpegHuffmanBaselineScanDecoder<TWriter>(decoder, header);
                 case JpegMarker.StartOfFrame2:
-                    return new JpegHuffmanProgressiveScanDecoder(decoder, header);
+                    return new JpegHuffmanProgressiveScanDecoder<TWriter>(decoder, header);
                 case JpegMarker.StartOfFrame3:
-                    return new JpegHuffmanLosslessScanDecoder(decoder, header);
+                    return new JpegHuffmanLosslessScanDecoder<TWriter>(decoder, header);
                 case JpegMarker.StartOfFrame9:
-                    return new JpegArithmeticSequentialScanDecoder(decoder, header);
+                    return new JpegArithmeticSequentialScanDecoder<TWriter>(decoder, header);
                 case JpegMarker.StartOfFrame10:
-                    return new JpegArithmeticProgressiveScanDecoder(decoder, header);
+                    return new JpegArithmeticProgressiveScanDecoder<TWriter>(decoder, header);
                 default:
                     return null;
             }

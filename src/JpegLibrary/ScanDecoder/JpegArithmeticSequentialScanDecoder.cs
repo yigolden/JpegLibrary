@@ -5,7 +5,8 @@ using System.Runtime.CompilerServices;
 
 namespace JpegLibrary.ScanDecoder
 {
-    internal class JpegArithmeticSequentialScanDecoder : JpegArithmeticScanDecoder
+    internal class JpegArithmeticSequentialScanDecoder<TWriter> : JpegArithmeticScanDecoder<TWriter>
+        where TWriter: notnull, IJpegBlockOutputWriter
     {
         private readonly JpegFrameHeader _frameHeader;
 
@@ -19,7 +20,7 @@ namespace JpegLibrary.ScanDecoder
 
         private readonly JpegArithmeticDecodingComponent[] _components;
 
-        public JpegArithmeticSequentialScanDecoder(JpegDecoder decoder, JpegFrameHeader frameHeader) : base(decoder)
+        public JpegArithmeticSequentialScanDecoder(IJpegDecoder<TWriter> decoder, JpegFrameHeader frameHeader) : base(decoder)
         {
             _frameHeader = frameHeader;
 
@@ -50,7 +51,7 @@ namespace JpegLibrary.ScanDecoder
         public override void ProcessScan(ref JpegReader reader, JpegScanHeader scanHeader)
         {
             JpegFrameHeader frameHeader = _frameHeader;
-            JpegBlockOutputWriter? outputWriter = Decoder.GetOutputWriter();
+            TWriter outputWriter = Decoder.GetOutputWriter();
 
             if (frameHeader.Components is null)
             {
@@ -59,10 +60,6 @@ namespace JpegLibrary.ScanDecoder
             if (scanHeader.Components is null)
             {
                 ThrowInvalidDataException("Component parameters are missing in JPEG scan header.");
-            }
-            if (outputWriter is null)
-            {
-                throw new InvalidOperationException("Output writer is not specified.");
             }
 
             // Resolve each component
@@ -308,7 +305,7 @@ namespace JpegLibrary.ScanDecoder
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void WriteBlock(JpegBlockOutputWriter outputWriter, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsamplingFactor, int verticalSubsamplingFactor)
+        private static void WriteBlock(TWriter outputWriter, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsamplingFactor, int verticalSubsamplingFactor)
         {
             if (horizontalSubsamplingFactor == 1 && verticalSubsamplingFactor == 1)
             {
@@ -321,7 +318,7 @@ namespace JpegLibrary.ScanDecoder
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void WriteBlockSlow(JpegBlockOutputWriter outputWriter, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsamplingFactor, int verticalSubsamplingFactor)
+        private static void WriteBlockSlow(TWriter outputWriter, ref short blockRef, int componentIndex, int x, int y, int horizontalSubsamplingFactor, int verticalSubsamplingFactor)
         {
             Unsafe.SkipInit(out JpegBlock8x8 tempBlock);
 

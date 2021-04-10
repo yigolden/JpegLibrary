@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 
 namespace JpegLibrary.ScanDecoder
 {
-    internal class JpegArithmeticProgressiveScanDecoder : JpegArithmeticScanDecoder
+    internal class JpegArithmeticProgressiveScanDecoder<TWriter> : JpegArithmeticScanDecoder<TWriter>
+        where TWriter : notnull, IJpegBlockOutputWriter
     {
         private readonly JpegFrameHeader _frameHeader;
 
@@ -15,11 +16,11 @@ namespace JpegLibrary.ScanDecoder
         private ushort _restartInterval;
         private int _mcusBeforeRestart;
 
-        private readonly JpegBlockOutputWriter _outputWriter;
+        private readonly TWriter _outputWriter;
         private readonly JpegBlockAllocator _allocator;
         private readonly JpegArithmeticDecodingComponent[] _components;
 
-        public JpegArithmeticProgressiveScanDecoder(JpegDecoder decoder, JpegFrameHeader frameHeader) : base(decoder)
+        public JpegArithmeticProgressiveScanDecoder(IJpegDecoder<TWriter> decoder, JpegFrameHeader frameHeader) : base(decoder)
         {
             _frameHeader = frameHeader;
 
@@ -36,12 +37,7 @@ namespace JpegLibrary.ScanDecoder
             _mcusPerColumn = (frameHeader.NumberOfLines + 8 * maxVerticalSampling - 1) / (8 * maxVerticalSampling);
             _levelShift = 1 << (frameHeader.SamplePrecision - 1);
 
-            JpegBlockOutputWriter? outputWriter = decoder.GetOutputWriter();
-            if (outputWriter is null)
-            {
-                ThrowInvalidDataException("Output writer is not set.");
-            }
-            _outputWriter = outputWriter;
+            _outputWriter = decoder.GetOutputWriter();
             _allocator = new JpegBlockAllocator(decoder.MemoryPool);
             _allocator.Allocate(frameHeader);
 
