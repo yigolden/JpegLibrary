@@ -6,6 +6,7 @@
     <Description>JPEG decoder, encoder and optimizer implemented in C#.</Description>
     <TargetFrameworks>net45;netstandard1.1;netstandard2.0;netcoreapp2.1;netstandard2.1;netcoreapp3.0;net5</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard2.0'">
