@@ -2,6 +2,7 @@
 
 using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
@@ -78,6 +79,7 @@ namespace JpegLibrary
         /// <param name="scanHeader">The scan header parsed.</param>
         /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
         /// <returns>True is the scan header is successfully parsed.</returns>
+        [SkipLocalsInit]
         public static bool TryParse(ReadOnlySequence<byte> buffer, bool metadataOnly, out JpegScanHeader scanHeader, out int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -288,6 +290,7 @@ namespace JpegLibrary
         /// <param name="buffer">The buffer to read from.</param>
         /// <param name="component">The scan component parsed.</param>
         /// <returns>True is the scan component is successfully parsed.</returns>
+        [SkipLocalsInit]
         public static bool TryParse(ReadOnlySequence<byte> buffer, out JpegScanComponentSpecificationParameters component)
         {
             if (buffer.IsSingleSegment)

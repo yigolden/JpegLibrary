@@ -6,6 +6,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace JpegLibrary
 {
@@ -210,6 +211,7 @@ namespace JpegLibrary
             return scanHeader;
         }
 
+        [SkipLocalsInit]
         private void ProcessDefineRestartInterval(ref JpegReader reader)
         {
             if (!reader.TryReadLength(out ushort length))

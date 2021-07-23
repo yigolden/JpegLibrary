@@ -177,6 +177,7 @@ namespace JpegLibrary
         /// <param name="huffmanTable">The Huffman table parsed.</param>
         /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
         /// <returns>True is the Huffman table is successfully parsed.</returns>
+        [SkipLocalsInit]
         public static bool TryParse(byte tableClass, byte identifier, ReadOnlySequence<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, ref int bytesConsumed)
         {
             if (buffer.IsSingleSegment)
@@ -244,6 +245,7 @@ namespace JpegLibrary
         /// <param name="huffmanTable">The Huffman table parsed.</param>
         /// <param name="bytesConsumed">The count of bytes consumed by the parser.</param>
         /// <returns>True is the Huffman table is successfully parsed.</returns>
+        [SkipLocalsInit]
         public static bool TryParse(byte tableClass, byte identifier, ReadOnlySpan<byte> buffer, [NotNullWhen(true)] out JpegHuffmanDecodingTable? huffmanTable, ref int bytesConsumed)
         {
             if (buffer.Length < 16)
