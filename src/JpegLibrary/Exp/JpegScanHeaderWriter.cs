@@ -38,7 +38,7 @@ namespace JpegLibrary
         /// <summary>
         /// Gets the count of bytes required to encode this scan header.
         /// </summary>
-        public byte BytesRequired => (byte)(4 + 2 * NumberOfComponents);
+        public byte BytesRequired => (byte)(4 + 2 * _components.Length);
 
         public JpegScanHeaderWriter(ReadOnlySpan<JpegScanComponentSpecificationParameters> components, byte startOfSpectralSelection, byte endOfSpectralSelection, byte successiveApproximationBitPositionHigh, byte successiveApproximationBitPositionLow)
         {
