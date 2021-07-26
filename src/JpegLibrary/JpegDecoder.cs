@@ -631,6 +631,7 @@ namespace JpegLibrary
             scanDecoder.ProcessScan(ref reader, scanHeader);
         }
 
+        [SkipLocalsInit]
         private void ProcessDefineRestartInterval(ref JpegReader reader)
         {
             if (!reader.TryReadLength(out ushort length))
