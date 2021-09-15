@@ -45,7 +45,7 @@ namespace JpegLibrary
 
         public void Dispose()
         {
-            if (!(_builders is null))
+            if (_builders is not null)
             {
                 _builders.Clear();
                 _builders = null;

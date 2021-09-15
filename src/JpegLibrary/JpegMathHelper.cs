@@ -9,14 +9,6 @@ namespace JpegLibrary
 {
     internal static class JpegMathHelper
     {
-        private static ReadOnlySpan<byte> Log2DeBruijn => new byte[32]
-        {
-            00, 09, 01, 10, 13, 21, 02, 29,
-            11, 14, 16, 18, 22, 25, 03, 30,
-            08, 12, 20, 28, 15, 17, 24, 07,
-            19, 27, 23, 06, 26, 05, 04, 31
-        };
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RoundToInt32(float value)
         {
@@ -57,7 +49,7 @@ namespace JpegLibrary
             return Math.Clamp(value, min, max);
 #endif
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Log2(uint value)
         {
@@ -67,6 +59,15 @@ namespace JpegLibrary
             return BitOperations.Log2(value);
 #endif
         }
+
+#if NO_BIT_OPERATIONS
+        private static ReadOnlySpan<byte> Log2DeBruijn => new byte[32]
+        {
+            00, 09, 01, 10, 13, 21, 02, 29,
+            11, 14, 16, 18, 22, 25, 03, 30,
+            08, 12, 20, 28, 15, 17, 24, 07,
+            19, 27, 23, 06, 26, 05, 04, 31
+        };
 
         /// <summary>
         /// Returns the integer (floor) log of the specified value, base 2.
@@ -93,5 +94,6 @@ namespace JpegLibrary
                 // uint|long -> IntPtr cast on 32-bit platforms does expensive overflow checks not needed here
                 (IntPtr)(int)((value * 0x07C4ACDDu) >> 27));
         }
+#endif
     }
 }

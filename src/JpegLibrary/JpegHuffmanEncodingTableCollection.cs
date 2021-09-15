@@ -106,7 +106,7 @@ namespace JpegLibrary
             ushort bytesRequired = 0;
             foreach (EncodingTableWithIdentifier item in _tables)
             {
-                if (!(item.EncodingTable is JpegHuffmanEncodingTable encodingTable))
+                if (item.EncodingTable is not JpegHuffmanEncodingTable encodingTable)
                 {
                     throw new InvalidOperationException();
                 }
@@ -126,7 +126,7 @@ namespace JpegLibrary
             bytesWritten = 0;
             foreach (EncodingTableWithIdentifier item in _tables)
             {
-                if (!(item.EncodingTable is JpegHuffmanEncodingTable encodingTable))
+                if (item.EncodingTable is not JpegHuffmanEncodingTable encodingTable)
                 {
                     throw new InvalidOperationException();
                 }
@@ -160,7 +160,7 @@ namespace JpegLibrary
 
             foreach (EncodingTableWithIdentifier item in _tables)
             {
-                if (!(item.EncodingTable is JpegHuffmanEncodingTable encodingTable))
+                if (item.EncodingTable is not JpegHuffmanEncodingTable encodingTable)
                 {
                     throw new InvalidOperationException();
                 }

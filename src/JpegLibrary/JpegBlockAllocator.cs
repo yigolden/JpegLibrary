@@ -34,7 +34,7 @@ namespace JpegLibrary
         /// <param name="frameHeader">The information of the frame.</param>
         public void Allocate(JpegFrameHeader frameHeader)
         {
-            if (!(_bufferHandle is null))
+            if (_bufferHandle is not null)
             {
                 throw new InvalidOperationException();
             }
@@ -194,7 +194,7 @@ namespace JpegLibrary
         /// </summary>
         public void Dispose()
         {
-            if (!(_bufferHandle is null))
+            if (_bufferHandle is not null)
             {
                 _bufferHandle.Dispose();
                 _bufferHandle = null;

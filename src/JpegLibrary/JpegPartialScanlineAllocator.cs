@@ -122,7 +122,7 @@ namespace JpegLibrary
 
             Unsafe.SkipInit(out JpegBlock8x8 block);
             JpegBlockOutputWriter? outputWriter = _writer;
-            Debug.Assert(!(outputWriter is null));
+            Debug.Assert(outputWriter is not null);
 
             ComponentAllocation component = components[componentIndex];
             int width = component.Width;
@@ -223,7 +223,7 @@ namespace JpegLibrary
 
         public void Dispose()
         {
-            if (!(_bufferHandle is null))
+            if (_bufferHandle is not null)
             {
                 _bufferHandle.Dispose();
                 _bufferHandle = null;
