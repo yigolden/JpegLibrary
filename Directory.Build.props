@@ -9,7 +9,7 @@
   <PropertyGroup>
     <Product>JpegLibrary</Product>
     <Authors>YiGolden</Authors>
-    <Copyright>Copyright (c) 2019-2020 yigolden</Copyright>
+    <Copyright>Copyright (c) 2019-2021 yigolden</Copyright>
     <PackageTags>jpeg</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/yigolden/JpegLibrary</PackageProjectUrl>
