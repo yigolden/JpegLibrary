@@ -44,10 +44,10 @@ namespace JpegDecode
             command.Handler = CommandHandler.Create<FileInfo, string>(DecodeAction.Decode);
 
             static Option Output() =>
-                new Option(new[] { "--output", "--out", "-o" }, "Output image file.")
+                new Option<string>(new[] { "--output", "--out", "-o" }, "Output image file.")
                 {
                     Name = "output",
-                    Argument = new Argument<string>() { Arity = ArgumentArity.ExactlyOne }
+                    Arity = ArgumentArity.ZeroOrOne
                 };
         }
     }

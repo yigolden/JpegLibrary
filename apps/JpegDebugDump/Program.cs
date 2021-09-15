@@ -45,11 +45,12 @@ namespace JpegDebugDump
             command.Handler = CommandHandler.Create<FileInfo, string, CancellationToken>(DebugDumpAction.DebugDump);
 
             static Option Output() =>
-                new Option(new[] { "--output", "--out", "-o" }, "Output file base path.")
+                new Option<string>(new[] { "--output", "--out", "-o" }, "Output file base path.")
                 {
                     Name = "output",
-                    Argument = new Argument<string>() { Arity = ArgumentArity.ZeroOrOne }
+                    Arity = ArgumentArity.ZeroOrOne
                 };
+
         }
     }
 
