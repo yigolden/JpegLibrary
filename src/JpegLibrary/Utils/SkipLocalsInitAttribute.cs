@@ -1,6 +1,4 @@
-﻿[module: System.Runtime.CompilerServices.SkipLocalsInit]
-
-#if NO_SKIP_LOCALS_INIT
+﻿#if NO_SKIP_LOCALS_INIT
 
 namespace System.Runtime.CompilerServices
 {
