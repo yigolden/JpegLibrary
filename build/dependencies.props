@@ -10,6 +10,6 @@
     <MicrosoftSourceLinkGitHubPackageVersion>1.0.0</MicrosoftSourceLinkGitHubPackageVersion>
 
     <SystemMemoryPackageVersion>4.5.4</SystemMemoryPackageVersion>
-    <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0-rc.1.21451.13</SystemRuntimeCompilerServicesUnsafePackageVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
   </PropertyGroup>
 </Project>
