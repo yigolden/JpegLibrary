@@ -6,9 +6,9 @@ JPEG decoder, encoder and optimizer implemented in C#.
 
 ## Supported Runtimes
 
-* .NET Framework 4.5+
-* .NET Core 1.0+
-* .NET Standard 1.1+
+* .NET Framework 4.6.1+
+* .NET Core 3.1+
+* Runtimes compatible with .NET Standard 2.0
 
 ## Supported Features
 
