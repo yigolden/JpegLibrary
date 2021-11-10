@@ -44,10 +44,10 @@ namespace JpegOptimize
             command.Handler = CommandHandler.Create<FileInfo, FileInfo>(OptimizeAction.Optimize);
 
             static Option Output() =>
-                new Option(new[] { "--output", "--out", "-o" }, "Output optimized JPEG file.")
+                new Option<string>(new[] { "--output", "--out", "-o" }, "Output optimized JPEG file.")
                 {
                     Name = "output",
-                    Argument = new Argument<FileInfo>() { Arity = ArgumentArity.ExactlyOne }
+                    Arity = ArgumentArity.ExactlyOne
                 };
         }
     }

@@ -48,8 +48,8 @@ namespace JpegLibrary.ScanDecoder
 
         protected int InitDecodeComponents(JpegFrameHeader frameHeader, JpegScanHeader scanHeader, Span<JpegArithmeticDecodingComponent> components)
         {
-            Debug.Assert(!(frameHeader.Components is null));
-            Debug.Assert(!(scanHeader.Components is null));
+            Debug.Assert(frameHeader.Components is not null);
+            Debug.Assert(scanHeader.Components is not null);
 
             // Compute maximum sampling factor
             int maxHorizontalSampling = 1;

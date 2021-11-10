@@ -223,7 +223,7 @@ namespace JpegLibrary
 
         public void Dispose()
         {
-            if (!(_bufferHandle is null))
+            if (_bufferHandle is not null)
             {
                 _bufferHandle.Dispose();
                 _bufferHandle = null;

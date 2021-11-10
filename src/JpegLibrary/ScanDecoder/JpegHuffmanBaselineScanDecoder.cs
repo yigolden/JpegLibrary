@@ -177,8 +177,8 @@ namespace JpegLibrary.ScanDecoder
         {
             ref short destinationRef = ref Unsafe.As<JpegBlock8x8, short>(ref destinationBlock);
 
-            Debug.Assert(!(component.DcTable is null));
-            Debug.Assert(!(component.AcTable is null));
+            Debug.Assert(component.DcTable is not null);
+            Debug.Assert(component.AcTable is not null);
 
             // DC
             int t = DecodeHuffmanCode(ref reader, component.DcTable!);

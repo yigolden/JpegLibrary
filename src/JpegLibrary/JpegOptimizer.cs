@@ -466,10 +466,10 @@ namespace JpegLibrary
 
         private static void ProcessBlockBaseline(ref JpegBitReader reader, JpegTranscodeComponent component)
         {
-            Debug.Assert(!(component.DcTable is null));
-            Debug.Assert(!(component.DcTableBuilder is null));
-            Debug.Assert(!(component.AcTable is null));
-            Debug.Assert(!(component.AcTableBuilder is null));
+            Debug.Assert(component.DcTable is not null);
+            Debug.Assert(component.DcTableBuilder is not null);
+            Debug.Assert(component.AcTable is not null);
+            Debug.Assert(component.AcTableBuilder is not null);
 
             // DC
             int t = DecodeHuffmanCode(ref reader, component.DcTable!);
@@ -835,10 +835,10 @@ namespace JpegLibrary
 
         private static void CopyBlockBaseline(ref JpegBitReader reader, ref JpegWriter writer, JpegTranscodeComponent component)
         {
-            Debug.Assert(!(component.DcTable is null));
-            Debug.Assert(!(component.DcEncodingTable is null));
-            Debug.Assert(!(component.AcTable is null));
-            Debug.Assert(!(component.AcEncodingTable is null));
+            Debug.Assert(component.DcTable is not null);
+            Debug.Assert(component.DcEncodingTable is not null);
+            Debug.Assert(component.AcTable is not null);
+            Debug.Assert(component.AcEncodingTable is not null);
 
             // DC
             int symbol = DecodeHuffmanCode(ref reader, component.DcTable!);

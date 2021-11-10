@@ -72,7 +72,7 @@ namespace JpegLibrary
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entry Lookup(int code16bit)
         {
-            Debug.Assert(!(_lookaheadTable is null));
+            Debug.Assert(_lookaheadTable is not null);
 
             int high8 = code16bit >> 8;
             Entry entry = _lookaheadTable![high8];
@@ -87,9 +87,9 @@ namespace JpegLibrary
         [MethodImpl(MethodImplOptions.NoInlining)]
         private Entry LookupSlow(int code16bit)
         {
-            Debug.Assert(!(_maxCode is null));
-            Debug.Assert(!(_values is null));
-            Debug.Assert(!(_valOffset is null));
+            Debug.Assert(_maxCode is not null);
+            Debug.Assert(_values is not null);
+            Debug.Assert(_valOffset is not null);
 
             ushort[] maxCode = _maxCode!;
 
@@ -377,7 +377,7 @@ namespace JpegLibrary
 
         private void FillByteLookupTable(int code, byte codeSize, byte value)
         {
-            Debug.Assert(!(_lookaheadTable is null));
+            Debug.Assert(_lookaheadTable is not null);
             Debug.Assert(codeSize <= 8);
 
             Entry[] table = _lookaheadTable!;
