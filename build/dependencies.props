@@ -6,7 +6,7 @@
   <PropertyGroup Label="Dependency Versions">
     <NerdbankGitVersioningPackageVersion>3.4.231</NerdbankGitVersioningPackageVersion>
     <MicrosoftNETFrameworkReferenceAssembliesPackageVersion>1.0.0</MicrosoftNETFrameworkReferenceAssembliesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>1.0.0</MicrosoftSourceLinkGitHubPackageVersion>
+    <MicrosoftSourceLinkGitHubPackageVersion>1.1.0</MicrosoftSourceLinkGitHubPackageVersion>
 
     <SystemMemoryPackageVersion>4.5.4</SystemMemoryPackageVersion>
     <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
