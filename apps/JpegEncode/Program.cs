@@ -15,13 +15,7 @@ namespace JpegEncode
 
             SetupEncodeCommand(builder.Command);
 
-            builder.UseVersionOption();
-
-            builder.UseHelp();
-            builder.UseSuggestDirective();
-            builder.RegisterWithDotnetSuggest();
-            builder.UseParseErrorReporting();
-            builder.UseExceptionHandler();
+            builder.UseDefaults();
 
             Parser parser = builder.Build();
             await parser.InvokeAsync(args);
@@ -59,7 +53,7 @@ namespace JpegEncode
                 };
 
             static Option OptimizeCoding() =>
-                new Option<bool>(new[] { "--quality" }, "Output JPEG quality.")
+                new Option<bool>(new[] { "--optimize-coding" }, "Output JPEG quality.")
                 {
                     Name = "optimizeCoding",
                 };

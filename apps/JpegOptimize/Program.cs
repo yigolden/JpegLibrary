@@ -15,13 +15,7 @@ namespace JpegOptimize
 
             SetupOptimizeCommand(builder.Command);
 
-            builder.UseVersionOption();
-
-            builder.UseHelp();
-            builder.UseSuggestDirective();
-            builder.RegisterWithDotnetSuggest();
-            builder.UseParseErrorReporting();
-            builder.UseExceptionHandler();
+            builder.UseDefaults();
 
             Parser parser = builder.Build();
             await parser.InvokeAsync(args);
