@@ -4,9 +4,9 @@
     <PreviouslyPublishedPackageVersion>0.4.26</PreviouslyPublishedPackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="Dependency Versions">
-    <NerdbankGitVersioningPackageVersion>3.4.231</NerdbankGitVersioningPackageVersion>
-    <MicrosoftNETFrameworkReferenceAssembliesPackageVersion>1.0.0</MicrosoftNETFrameworkReferenceAssembliesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>1.0.0</MicrosoftSourceLinkGitHubPackageVersion>
+    <NerdbankGitVersioningPackageVersion>3.4.244</NerdbankGitVersioningPackageVersion>
+    <MicrosoftNETFrameworkReferenceAssembliesPackageVersion>1.0.2</MicrosoftNETFrameworkReferenceAssembliesPackageVersion>
+    <MicrosoftSourceLinkGitHubPackageVersion>1.1.1</MicrosoftSourceLinkGitHubPackageVersion>
 
     <SystemMemoryPackageVersion>4.5.4</SystemMemoryPackageVersion>
     <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
