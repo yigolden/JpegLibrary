@@ -51,9 +51,9 @@ namespace JpegEncode
                 encoder.SetHuffmanTable(true, 1, JpegStandardHuffmanEncodingTable.GetChrominanceDCTable());
                 encoder.SetHuffmanTable(false, 1, JpegStandardHuffmanEncodingTable.GetChrominanceACTable());
             }
-            encoder.AddComponent(1, 0, 0, 0, 1, 1); // Y component
-            encoder.AddComponent(2, 1, 1, 1, 2, 2); // Cb component
-            encoder.AddComponent(3, 1, 1, 1, 2, 2); // Cr component
+            encoder.AddComponent(1, 0, 0, 0, 2, 2); // Y component
+            encoder.AddComponent(2, 1, 1, 1, 1, 1); // Cb component
+            encoder.AddComponent(3, 1, 1, 1, 1, 1); // Cr component
 
             encoder.SetInputReader(new JpegBufferInputReader(image.Width, image.Height, 3, ycbcr));
 
