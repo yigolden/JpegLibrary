@@ -150,6 +150,15 @@ namespace JpegLibrary
                     _register |= (((ulong)1 << (8 - _bitsInRegister)) - 1) << 56;
                     _bitsInRegister = 8;
 
+                    if (_buffer.Length < 16)
+                    {
+                        if (_bufferConsunmed != 0)
+                        {
+                            _writer.Advance(_bufferConsunmed);
+                        }
+                        _buffer = _writer.GetSpan(Math.Max(_minimumBufferSize, 16));
+                    }
+
                     FlushRegister();
                 }
 
