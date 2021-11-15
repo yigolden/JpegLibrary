@@ -166,7 +166,7 @@ namespace JpegLibrary
         /// <summary>
         /// Add a component to encode.
         /// </summary>
-        /// <param name="componentIndex">The index of the componentIndex.</param>
+        /// <param name="componentIndex">The index of the component.</param>
         /// <param name="quantizationTableIdentifier">The identifier of the quantization table.</param>
         /// <param name="huffmanDcTableIdentifier">The identifier of the DC Huffman table.</param>
         /// <param name="huffmanAcTableIdentifier">The identifier of the AC Huffman table.</param>
@@ -449,7 +449,7 @@ namespace JpegLibrary
                 {
                     foreach (JpegHuffmanEncodingComponent component in components)
                     {
-                        int index = component.ComponentIndex;
+                        int index = component.Index;
                         int h = component.HorizontalSamplingFactor;
                         int v = component.VerticalSamplingFactor;
                         int hs = component.HorizontalSubsamplingFactor;
