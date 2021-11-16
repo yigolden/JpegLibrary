@@ -13,14 +13,14 @@ namespace JpegLibrary
     /// </summary>
     public class JpegHuffmanEncodingTableBuilder
     {
-        private int[] _frequencies;
+        private uint[] _frequencies;
 
         /// <summary>
         /// Initialize the Huffman table builder.
         /// </summary>
         public JpegHuffmanEncodingTableBuilder()
         {
-            _frequencies = new int[256];
+            _frequencies = new uint[256];
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace JpegLibrary
 
         struct Symbol
         {
-            public int Frequency;
+            public long Frequency;
             public short Value;
             public ushort CodeSize;
             public short Others;
@@ -70,7 +70,7 @@ namespace JpegLibrary
         {
             // Find code count
             int codeCount = 0;
-            int[] frequencies = _frequencies;
+            uint[] frequencies = _frequencies;
             for (int i = 0; i < frequencies.Length; i++)
             {
                 if (frequencies[i] > 0)
@@ -89,7 +89,7 @@ namespace JpegLibrary
             int index = 0;
             for (int i = 0; i < frequencies.Length; i++)
             {
-                if (frequencies[i] > 0)
+                if (frequencies[i] != 0)
                 {
                     symbols[index++] = new Symbol
                     {
@@ -112,17 +112,21 @@ namespace JpegLibrary
             FindHuffmanCodeSize(symbols);
 
             // Figure K.2 – Procedure to find the number of codes of each size
-            byte[] bits = new byte[32];
+            Span<byte> bits = stackalloc byte[60];
+            bits.Clear();
+
+            index = 32;
             for (int i = 0; i < symbols.Length; i++)
             {
-                if (symbols[i].CodeSize > 0)
+                int codeSize = symbols[i].CodeSize;
+                if (codeSize > 0)
                 {
-                    bits[symbols[i].CodeSize - 1]++;
+                    index = Math.Max(index, codeSize);
+                    bits[codeSize - 1]++;
                 }
             }
 
             // Figure K.3 – Procedure for limiting code lengths to 16 bits
-            index = 31;
             while (true)
             {
                 while (bits[index] > 0)
@@ -176,12 +180,12 @@ namespace JpegLibrary
             while (true)
             {
                 int v1 = -1, v2 = -1;
-                int v1frequency = -1, v2frequency = -1;
+                long v1frequency = -1, v2frequency = -1;
 
                 // Find V1 for least value of FREQ(V1) > 0
                 for (int i = 0; i < symbols.Length; i++)
                 {
-                    int frequency = symbols[i].Frequency;
+                    long frequency = symbols[i].Frequency;
                     if (frequency >= 0)
                     {
                         if (v1 == -1 || frequency < v1frequency)
@@ -195,7 +199,7 @@ namespace JpegLibrary
                 // Find V2 for next least value of FREQ(V2) > 0
                 for (int i = 0; i < symbols.Length; i++)
                 {
-                    int frequency = symbols[i].Frequency;
+                    long frequency = symbols[i].Frequency;
                     if (frequency >= 0 && i != v1)
                     {
                         if (v2 == -1 || frequency < v2frequency)
@@ -215,35 +219,25 @@ namespace JpegLibrary
                 symbols[v1].Frequency += symbols[v2].Frequency;
                 symbols[v2].Frequency = -1;
 
-                while (true)
+                symbols[v1].CodeSize++;
+                while (symbols[v1].Others != -1)
                 {
-                    symbols[v1].CodeSize++;
-
-                    if (symbols[v1].Others == -1)
-                    {
-                        break;
-                    }
-
                     v1 = symbols[v1].Others;
+                    symbols[v1].CodeSize++;
                 }
 
                 symbols[v1].Others = (short)v2;
 
-                while (true)
+                symbols[v2].CodeSize++;
+                while (symbols[v2].Others != -1)
                 {
-                    symbols[v2].CodeSize++;
-
-                    if (symbols[v2].Others == -1)
-                    {
-                        break;
-                    }
-
                     v2 = symbols[v2].Others;
+                    symbols[v2].CodeSize++;
                 }
             }
         }
 
-        private static JpegHuffmanCanonicalCode[] BuildCanonicalCode(ReadOnlySpan<byte> bits, ReadOnlySpan<Symbol> symbols)
+        private static JpegHuffmanCanonicalCode[] BuildCanonicalCode(Span<byte> bits, ReadOnlySpan<Symbol> symbols)
         {
             int codeCount = symbols.Length;
             var codes = new JpegHuffmanCanonicalCode[codeCount];
@@ -295,7 +289,7 @@ namespace JpegLibrary
         {
             // Find code count
             int codeCount = 0;
-            int[] frequencies = _frequencies;
+            uint[] frequencies = _frequencies;
             for (int i = 0; i < frequencies.Length; i++)
             {
                 if (frequencies[i] > 0)
@@ -309,7 +303,7 @@ namespace JpegLibrary
             int index = 0;
             for (int i = 0; i < frequencies.Length; i++)
             {
-                if (frequencies[i] > 0)
+                if (frequencies[i] != 0)
                 {
                     symbols[index++] = new Symbol
                     {
@@ -446,12 +440,12 @@ namespace JpegLibrary
 
         class Node
         {
+            public long Frequency { get; set; }
             public short Index { get; set; }
-            public int Frequency { get; set; }
             public Node? Left { get; set; }
             public Node? Right { get; set; }
 
-            public void Set(short index, int frequency)
+            public void Set(short index, long frequency)
             {
                 Index = index;
                 Frequency = frequency;
